@@ -126,10 +126,6 @@
             padding: 5px 10px;
             font-size: 0.8em;
         }
-        .save-btn {
-            width: 100%;
-            margin-top: 15px;
-        }
         .footer {
             text-align: center;
             color: #003087;
@@ -173,15 +169,28 @@
                 <button onclick="addAppointment()">إضافة</button>
             </div>
             <ul id="appointmentList" class="appointment-list"></ul>
-            <button class="save-btn" onclick="saveAppointments()">حفظ التغييرات</button>
         </div>
         <div class="footer">مطور ومشغل بواسطة - LEO-AI</div>
     </div>
 
     <script>
         let selectedDay = 'السبت';
-        let appointments = JSON.parse(localStorage.getItem('appointments')) || {};
         const currentDate = new Date();
+
+        // ملف بيانات افتراضي داخل الكود
+        const defaultAppointments = {
+            "السبت": [{ text: "اجتماع فريق", date: "2025-02-22" }],
+            "الأحد": [],
+            "الإثنين": [{ text: "زيارة طبيب", date: "2025-02-24" }],
+            "الثلاثاء": [],
+            "الأربعاء": [],
+            "الخميس": [{ text: "موعد مهم", date: "2025-02-27" }],
+            "الجمعة": [],
+            "ملاحظات": [{ text: "شراء مستلزمات", date: "2025-02-28" }]
+        };
+
+        // تحميل البيانات من localStorage أو استخدام البيانات الافتراضية
+        let appointments = JSON.parse(localStorage.getItem('appointments')) || { ...defaultAppointments };
 
         window.onload = function() {
             checkExpiredAndImportant();
@@ -207,6 +216,7 @@
                 appointments[selectedDay].push(appointment);
                 document.getElementById('appointment').value = '';
                 document.getElementById('appointmentDate').value = '';
+                saveAppointments(); // حفظ تلقائي
                 updateAppointmentList();
                 checkExpiredAndImportant();
             }
@@ -218,23 +228,22 @@
             const newDate = prompt('تعديل التاريخ (YYYY-MM-DD):', appointment.date);
             if (newText && newDate) {
                 appointments[day][index] = { text: newText, date: newDate };
+                saveAppointments(); // حفظ تلقائي
                 updateAppointmentList();
                 checkExpiredAndImportant();
-                alert('اضغط على "حفظ التغييرات" لتأكيد التعديل.');
             }
         }
 
         function deleteAppointment(day, index) {
             appointments[day].splice(index, 1);
             if (appointments[day].length === 0) delete appointments[day];
+            saveAppointments(); // حفظ تلقائي
             updateAppointmentList();
             checkExpiredAndImportant();
-            alert('اضغط على "حفظ التغييرات" لتأكيد الحذف.');
         }
 
         function saveAppointments() {
             localStorage.setItem('appointments', JSON.stringify(appointments));
-            alert('تم حفظ التغييرات بنجاح!');
         }
 
         function updateAppointmentList() {
