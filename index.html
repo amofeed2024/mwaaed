@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تطبيق تنظيم المواعيد</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e6f0fa; /* أزرق فاتح للخلفية الخارجية */
+            color: #003087;
+            direction: rtl;
+            margin: 0;
+            padding: 10px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #d3d3d3; /* رمادي فاتح لخلفية التطبيق */
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        h1 {
+            text-align: center;
+            color: #003087;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        .days {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .day {
+            background-color: #003087;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            width: 20%;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
+            position: relative;
+            font-size: 0.9em;
+        }
+        .day:hover {
+            background-color: #ff8c00;
+            transform: scale(1.05);
+        }
+        .day.active {
+            background-color: #ff8c00;
+            transform: scale(1.05);
+        }
+        .day.expired::after {
+            content: "!";
+            color: red;
+            font-weight: bold;
+            position: absolute;
+            top: 2px;
+            right: 5px;
+        }
+        .day.important {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            50% { background-color: red; color: white; }
+        }
+        .appointments {
+            margin-top: 20px;
+        }
+        .appointment-input {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        input, button {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        input {
+            background-color: #f0f8ff;
+            color: #003087;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #ff8c00;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        button:hover {
+            background-color: #e07b00;
+            transform: scale(1.02);
+        }
+        .appointment-list {
+            list-style: none;
+            padding: 0;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .appointment-list li {
+            background-color: #f0f8ff;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        .appointment-list li button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            font-size: 0.8em;
+        }
+        .save-btn {
+            width: 100%;
+            margin-top: 15px;
+        }
+        .footer {
+            text-align: center;
+            color: #003087;
+            font-size: 0.8em;
+            margin-top: 20px;
+        }
+        @media (max-width: 480px) {
+            .day {
+                width: 22%; /* لضمان 4 أيقونات في كل صف */
+            }
+            h1 {
+                font-size: 1.2em;
+            }
+            input, button {
+                padding: 10px;
+                font-size: 0.9em;
+            }
+            .appointment-list li {
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تطبيق تنظيم المواعيد</h1>
+        <div class="days">
+            <div class="day" onclick="selectDay('السبت')">السبت</div>
+            <div class="day" onclick="selectDay('الأحد')">الأحد</div>
+            <div class="day" onclick="selectDay('الإثنين')">الإثنين</div>
+            <div class="day" onclick="selectDay('الثلاثاء')">الثلاثاء</div>
+            <div class="day" onclick="selectDay('الأربعاء')">الأربعاء</div>
+            <div class="day" onclick="selectDay('الخميس')">الخميس</div>
+            <div class="day" onclick="selectDay('الجمعة')">الجمعة</div>
+            <div class="day" onclick="selectDay('ملاحظات')">ملاحظات</div>
+        </div>
+        <div class="appointments">
+            <div class="appointment-input">
+                <input type="text" id="appointment" placeholder="الموعد (مثال: لقاء مهم)">
+                <input type="date" id="appointmentDate">
+                <button onclick="addAppointment()">إضافة</button>
+            </div>
+            <ul id="appointmentList" class="appointment-list"></ul>
+            <button class="save-btn" onclick="saveAppointments()">حفظ التغييرات</button>
+        </div>
+        <div class="footer">مطور ومشغل بواسطة - LEO-AI</div>
+    </div>
+
+    <script>
+        let selectedDay = 'السبت';
+        let appointments = JSON.parse(localStorage.getItem('appointments')) || {};
+        const currentDate = new Date();
+
+        window.onload = function() {
+            checkExpiredAndImportant();
+            updateAppointmentList();
+            document.querySelector('.day').classList.add('active');
+        };
+
+        function selectDay(day) {
+            selectedDay = day;
+            document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
+            event.target.classList.add('active');
+            updateAppointmentList();
+        }
+
+        function addAppointment() {
+            const input = document.getElementById('appointment').value;
+            const dateInput = document.getElementById('appointmentDate').value;
+            if (input && dateInput) {
+                if (!appointments[selectedDay]) {
+                    appointments[selectedDay] = [];
+                }
+                const appointment = { text: input, date: dateInput };
+                appointments[selectedDay].push(appointment);
+                document.getElementById('appointment').value = '';
+                document.getElementById('appointmentDate').value = '';
+                updateAppointmentList();
+                checkExpiredAndImportant();
+            }
+        }
+
+        function editAppointment(day, index) {
+            const appointment = appointments[day][index];
+            const newText = prompt('تعديل الموعد:', appointment.text);
+            const newDate = prompt('تعديل التاريخ (YYYY-MM-DD):', appointment.date);
+            if (newText && newDate) {
+                appointments[day][index] = { text: newText, date: newDate };
+                updateAppointmentList();
+                checkExpiredAndImportant();
+                alert('اضغط على "حفظ التغييرات" لتأكيد التعديل.');
+            }
+        }
+
+        function deleteAppointment(day, index) {
+            appointments[day].splice(index, 1);
+            if (appointments[day].length === 0) delete appointments[day];
+            updateAppointmentList();
+            checkExpiredAndImportant();
+            alert('اضغط على "حفظ التغييرات" لتأكيد الحذف.');
+        }
+
+        function saveAppointments() {
+            localStorage.setItem('appointments', JSON.stringify(appointments));
+            alert('تم حفظ التغييرات بنجاح!');
+        }
+
+        function updateAppointmentList() {
+            const list = document.getElementById('appointmentList');
+            list.innerHTML = '';
+            if (appointments[selectedDay]) {
+                appointments[selectedDay].forEach((app, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `${app.text} - ${app.date} 
+                        <div>
+                            <button onclick="editAppointment('${selectedDay}', ${index})">تعديل</button>
+                            <button onclick="deleteAppointment('${selectedDay}', ${index})">حذف</button>
+                        </div>`;
+                    list.appendChild(li);
+                });
+            }
+        }
+
+        function checkExpiredAndImportant() {
+            document.querySelectorAll('.day').forEach(dayElement => {
+                const dayName = dayElement.textContent;
+                dayElement.classList.remove('expired', 'important');
+                if (appointments[dayName] && appointments[dayName].length > 0) {
+                    const hasExpired = appointments[dayName].some(app => new Date(app.date) < currentDate);
+                    if (hasExpired) {
+                        dayElement.classList.add('expired');
+                    }
+                    const hasImportant = appointments[dayName].some(app => app.text.includes('مهم'));
+                    if (hasImportant) {
+                        dayElement.classList.add('important');
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
