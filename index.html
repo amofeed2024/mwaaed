@@ -6,8 +6,8 @@
     <title>تطبيق تنظيم المواعيد</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #e6f0fa; /* أزرق فاتح للخلفية الخارجية */
+            font-family: 'Tajawal', Arial, sans-serif;
+            background-color: #f5f7fa; /* خلفية أفتح */
             color: #003087;
             direction: rtl;
             margin: 0;
@@ -19,59 +19,106 @@
         }
         .container {
             width: 100%;
-            max-width: 600px;
-            background-color: #d3d3d3; /* رمادي فاتح لخلفية التطبيق */
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            background-color: #d3d3d3; /* خلفية رمادية فاتحة للتطبيق */
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 5px 25px rgba(0, 48, 135, 0.15);
             position: relative;
         }
         h1 {
             text-align: center;
             color: #003087;
-            font-size: 1.5em;
-            margin: 10px 0;
-        }
-        .days {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            gap: 10px;
+            font-size: 1.8em;
             margin: 15px 0;
+            position: relative;
         }
-        .day {
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 3px;
+            background-color: #ff8c00;
+            margin: 10px auto 0;
+            border-radius: 2px;
+        }
+        .search-bar {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+        .search-bar input {
+            flex-grow: 1;
+        }
+        .tabs {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 15px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .tab {
+            background-color: #ecf2ff;
+            color: #003087;
+            padding: 12px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            flex: 1;
+            min-width: 60px;
+            box-shadow: 0 2px 5px rgba(0, 48, 135, 0.08);
+            font-weight: 500;
+        }
+        .tab:hover {
+            background-color: #e0e9ff;
+            transform: translateY(-2px);
+        }
+        .tab.active {
             background-color: #003087;
             color: white;
-            padding: 10px;
-            border-radius: 8px;
-            width: 20%;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 48, 135, 0.2);
+        }
+        .tab.expired {
             position: relative;
-            font-size: 0.9em;
         }
-        .day:hover {
-            background-color: #ff8c00;
-            transform: scale(1.05);
-        }
-        .day.active {
-            background-color: #ff8c00;
-            transform: scale(1.05);
-        }
-        .day.expired::after {
+        .tab.expired::after {
             content: "!";
-            color: red;
-            font-weight: bold;
             position: absolute;
-            top: 2px;
-            right: 5px;
+            top: -5px;
+            right: -5px;
+            background-color: #ff3b30;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
         }
-        .day.important {
-            animation: blink 1s infinite;
+        .tab.important {
+            position: relative;
         }
-        @keyframes blink {
-            50% { background-color: red; color: white; }
+        .tab.important::before {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border: 2px solid #ff8c00;
+            border-radius: 17px;
+            animation: pulse 2s infinite;
+            pointer-events: none;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
         }
         .appointments {
             margin-top: 20px;
@@ -79,205 +126,693 @@
         .appointment-input {
             display: flex;
             flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            background-color: #f7f9ff;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: inset 0 2px 5px rgba(0, 48, 135, 0.05);
+        }
+        .flex-row {
+            display: flex;
             gap: 10px;
-            margin-bottom: 15px;
         }
-        input, button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
+        .flex-row > div {
+            flex: 1;
         }
-        input {
-            background-color: #f0f8ff;
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
             color: #003087;
+        }
+        input, select, textarea, button {
+            padding: 12px 15px;
+            border: 1px solid #d0d9e8;
+            border-radius: 12px;
+            font-size: 1em;
+            transition: all 0.3s;
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #003087;
+            box-shadow: 0 0 0 3px rgba(0, 48, 135, 0.1);
+        }
+        input, select, textarea {
+            background-color: #ffffff;
+            color: #333;
             width: 100%;
             box-sizing: border-box;
         }
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
         button {
-            background-color: #ff8c00;
+            background-color: #003087;
             color: white;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
+            transition: all 0.3s;
+            font-weight: bold;
+            border: none;
         }
         button:hover {
+            background-color: #002266;
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 48, 135, 0.2);
+        }
+        button.add-btn {
+            background-color: #ff8c00;
+        }
+        button.add-btn:hover {
             background-color: #e07b00;
-            transform: scale(1.02);
         }
         .appointment-list {
             list-style: none;
             padding: 0;
-            max-height: 200px;
+            max-height: 300px;
             overflow-y: auto;
+            margin-top: 10px;
         }
-        .appointment-list li {
-            background-color: #f0f8ff;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
+        .appointment-list:empty::after {
+            content: "لا توجد مواعيد مسجلة";
+            display: block;
+            text-align: center;
+            padding: 20px;
+            color: #888;
+            font-style: italic;
+        }
+        .appointment-item {
+            background-color: #ffffff;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 3px 10px rgba(0, 48, 135, 0.07);
+            border-right: 3px solid #003087;
+            transition: all 0.3s;
+        }
+        .appointment-item:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 5px 15px rgba(0, 48, 135, 0.1);
+        }
+        .appointment-item.important {
+            border-right-color: #ff8c00;
+        }
+        .appointment-item.completed {
+            opacity: 0.7;
+            text-decoration: line-through;
+            border-right-color: #4CAF50;
+        }
+        .appointment-item.expired {
+            border-right-color: #ff3b30;
+        }
+        .appointment-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.9em;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         }
-        .appointment-list li button {
-            margin-left: 5px;
-            padding: 5px 10px;
-            font-size: 0.8em;
+        .appointment-title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        .appointment-date {
+            color: #666;
+            font-size: 0.9em;
+        }
+        .appointment-description {
+            color: #333;
+            font-size: 0.95em;
+        }
+        .appointment-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.85em;
+            border-radius: 8px;
+        }
+        .btn-edit {
+            background-color: #4285f4;
+        }
+        .btn-delete {
+            background-color: #ff3b30;
+        }
+        .btn-complete {
+            background-color: #4CAF50;
+        }
+        .save-btn {
+            width: 100%;
+            margin-top: 15px;
+            padding: 15px;
+            font-size: 1.1em;
+            background-color: #003087;
         }
         .footer {
             text-align: center;
             color: #003087;
-            font-size: 0.8em;
-            margin-top: 20px;
+            font-size: 0.9em;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
         }
-        @media (max-width: 480px) {
-            .day {
-                width: 22%; /* لضمان 4 أيقونات في كل صف */
+        .filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 8px 15px;
+            background-color: #ecf2ff;
+            color: #003087;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s;
+        }
+        .filter-btn.active {
+            background-color: #003087;
+            color: white;
+        }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .badge.important {
+            background-color: #fff3e0;
+            color: #ff8c00;
+        }
+        .badge.repeat {
+            background-color: #e3f2fd;
+            color: #2196f3;
+        }
+        .badge.expired {
+            background-color: #ffe6e6;
+            color: #ff3b30;
+        }
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #003087;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 767px) {
+            .container {
+                padding: 12px;
+                max-width: 100%;
+                margin: 0;
+                border-radius: 15px;
+            }
+            .flex-row {
+                flex-direction: column;
+            }
+            .tab {
+                padding: 8px 12px;
+                font-size: 0.85em;
+                min-width: 50px;
             }
             h1 {
-                font-size: 1.2em;
+                font-size: 1.3em;
+                margin: 10px 0;
             }
-            input, button {
+            .appointment-item {
                 padding: 10px;
-                font-size: 0.9em;
+                margin-bottom: 8px;
             }
-            .appointment-list li {
+            input, textarea, select, button {
+                padding: 10px;
+                font-size: 0.95em;
+            }
+            .appointment-input {
+                gap: 10px;
+                padding: 12px;
+            }
+            .btn-small {
+                padding: 6px 10px;
                 font-size: 0.8em;
+            }
+            body {
+                padding: 5px;
+            }
+            .tabs {
+                gap: 5px;
+            }
+        }
+        /* إضافة طبقة لتمكين الوضع المظلم */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #121212;
+                color: #e1e1e1;
+            }
+            .container {
+                background-color: #1e1e1e;
+                box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+            }
+            h1 {
+                color: #ffffff;
+            }
+            .tab {
+                background-color: #2d2d2d;
+                color: #e1e1e1;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            }
+            .tab:hover {
+                background-color: #383838;
+            }
+            .tab.active {
+                background-color: #0055d4;
+            }
+            .appointment-input {
+                background-color: #2d2d2d;
+            }
+            input, select, textarea {
+                background-color: #333333;
+                color: #e1e1e1;
+                border-color: #444444;
+            }
+            input:focus, select:focus, textarea:focus {
+                border-color: #0055d4;
+                box-shadow: 0 0 0 3px rgba(0, 85, 212, 0.2);
+            }
+            label {
+                color: #e1e1e1;
+            }
+            .appointment-item {
+                background-color: #2d2d2d;
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+            }
+            .appointment-description {
+                color: #cccccc;
+            }
+            .appointment-date {
+                color: #aaaaaa;
+            }
+            .filter-btn {
+                background-color: #2d2d2d;
+                color: #e1e1e1;
+            }
+            .filter-btn.active {
+                background-color: #0055d4;
+            }
+            .footer {
+                color: #aaaaaa;
+                border-top-color: #333333;
+            }
+            .loading {
+                background-color: rgba(30, 30, 30, 0.8);
+            }
+            .loading-spinner {
+                border: 5px solid #333333;
+                border-top: 5px solid #0055d4;
             }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="loading">
+        <div class="loading-spinner"></div>
+    </div>
+    
     <div class="container">
-        <h1>تطبيق تنظيم المواعيد</h1>
-        <div class="days">
-            <div class="day" onclick="selectDay('السبت')">السبت</div>
-            <div class="day" onclick="selectDay('الأحد')">الأحد</div>
-            <div class="day" onclick="selectDay('الإثنين')">الإثنين</div>
-            <div class="day" onclick="selectDay('الثلاثاء')">الثلاثاء</div>
-            <div class="day" onclick="selectDay('الأربعاء')">الأربعاء</div>
-            <div class="day" onclick="selectDay('الخميس')">الخميس</div>
-            <div class="day" onclick="selectDay('الجمعة')">الجمعة</div>
-            <div class="day" onclick="selectDay('ملاحظات')">ملاحظات</div>
+        <h1>مواعيد أشرف مفيد</h1>
+        
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="ابحث عن موعد...">
+            <button onclick="searchAppointments()">بحث</button>
         </div>
+        
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterAppointments('all')">الكل</button>
+            <button class="filter-btn" onclick="filterAppointments('important')">مهم</button>
+            <button class="filter-btn" onclick="filterAppointments('today')">اليوم</button>
+            <button class="filter-btn" onclick="filterAppointments('upcoming')">القادمة</button>
+            <button class="filter-btn" onclick="filterAppointments('expired')">منتهية</button>
+            <button class="filter-btn" onclick="filterAppointments('completed')">منجزة</button>
+        </div>
+        
+        <div class="tabs" id="dayTabs">
+            <div class="tab active" onclick="selectDay('السبت')">السبت</div>
+            <div class="tab" onclick="selectDay('الأحد')">الأحد</div>
+            <div class="tab" onclick="selectDay('الإثنين')">الإثنين</div>
+            <div class="tab" onclick="selectDay('الثلاثاء')">الثلاثاء</div>
+            <div class="tab" onclick="selectDay('الأربعاء')">الأربعاء</div>
+            <div class="tab" onclick="selectDay('الخميس')">الخميس</div>
+            <div class="tab" onclick="selectDay('الجمعة')">الجمعة</div>
+            <div class="tab" onclick="selectDay('ملاحظات')">ملاحظات</div>
+        </div>
+        
         <div class="appointments">
             <div class="appointment-input">
-                <input type="text" id="appointment" placeholder="الموعد (مثال: لقاء مهم)">
-                <input type="date" id="appointmentDate">
-                <button onclick="addAppointment()">إضافة</button>
+                <div class="flex-row">
+                    <div>
+                        <label for="appointmentTitle">عنوان الموعد</label>
+                        <input type="text" id="appointmentTitle" placeholder="مثال: لقاء مع العميل">
+                    </div>
+                    <div>
+                        <label for="appointmentDate">التاريخ</label>
+                        <input type="date" id="appointmentDate">
+                    </div>
+                </div>
+                
+                <div class="flex-row">
+                    <div>
+                        <label for="appointmentTime">الوقت</label>
+                        <input type="time" id="appointmentTime">
+                    </div>
+                    <div>
+                        <label for="appointmentPriority">الأهمية</label>
+                        <select id="appointmentPriority">
+                            <option value="normal">عادي</option>
+                            <option value="important">مهم</option>
+                            <option value="very-important">مهم جداً</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="appointmentRepeat">تكرار الموعد</label>
+                    <select id="appointmentRepeat">
+                        <option value="none">بدون تكرار</option>
+                        <option value="daily">يومياً</option>
+                        <option value="weekly">أسبوعياً</option>
+                        <option value="monthly">شهرياً</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="appointmentDescription">تفاصيل إضافية</label>
+                    <textarea id="appointmentDescription" placeholder="أضف تفاصيل أو ملاحظات إضافية هنا..."></textarea>
+                </div>
+                
+                <div class="flex-row">
+                    <div>
+                        <label for="appointmentReminder">التذكير قبل الموعد بـ</label>
+                        <select id="appointmentReminder">
+                            <option value="none">بدون تذكير</option>
+                            <option value="15min">15 دقيقة</option>
+                            <option value="30min">30 دقيقة</option>
+                            <option value="1hour">ساعة</option>
+                            <option value="1day">يوم</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="appointmentLocation">الموقع</label>
+                        <input type="text" id="appointmentLocation" placeholder="مثال: مكتب الشركة">
+                    </div>
+                </div>
+                
+                <button class="add-btn" onclick="addAppointment()">إضافة الموعد</button>
             </div>
-            <ul id="appointmentList" class="appointment-list"></ul>
+            
+            <div id="appointmentList" class="appointment-list"></div>
+            
+            <button class="save-btn" onclick="saveAppointments()">حفظ جميع التغييرات</button>
         </div>
-        <div class="footer">مطور ومشغل بواسطة - LEO-AI</div>
+        
+        <div class="footer">
+            <p>تطبيق تنظيم المواعيد - النسخة 2.0</p>
+            <p>مطور ومشغل بواسطة - LEO-AI</p>
+        </div>
     </div>
 
     <script>
         let selectedDay = 'السبت';
+        let appointments = JSON.parse(localStorage.getItem('appointments')) || {};
+        let currentFilter = 'all';
+        let searchQuery = '';
         const currentDate = new Date();
-
-        // ملف بيانات افتراضي داخل الكود
-        const defaultAppointments = {
-            "السبت": [{ text: "اجتماع فريق", date: "2025-02-22" }],
-            "الأحد": [],
-            "الإثنين": [{ text: "زيارة طبيب", date: "2025-02-24" }],
-            "الثلاثاء": [],
-            "الأربعاء": [],
-            "الخميس": [{ text: "موعد مهم", date: "2025-02-27" }],
-            "الجمعة": [],
-            "ملاحظات": [{ text: "شراء مستلزمات", date: "2025-02-28" }]
-        };
-
-        // تحميل البيانات من localStorage أو استخدام البيانات الافتراضية
-        let appointments = JSON.parse(localStorage.getItem('appointments')) || { ...defaultAppointments };
-
+        
+        // دالة تنسيق التاريخ
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('ar-SA', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        
+        // دالة تنسيق الوقت
+        function formatTime(timeStr) {
+            if (!timeStr) return '';
+            return timeStr;
+        }
+        
+        // دالة للتحقق من حالة الموعد (منتهي، قادم، اليوم)
+        function getAppointmentStatus(appointment) {
+            const appointmentDate = new Date(appointment.date);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            appointmentDate.setHours(0, 0, 0, 0);
+            
+            if (appointment.completed) return 'completed';
+            if (appointmentDate < today) return 'expired';
+            if (appointmentDate.getTime() === today.getTime()) return 'today';
+            return 'upcoming';
+        }
+        
+        // دالة لإنشاء معرف فريد لكل موعد
+        function generateId() {
+            return Date.now() + Math.floor(Math.random() * 1000);
+        }
+        
         window.onload = function() {
-            checkExpiredAndImportant();
+            // التحقق من وجود تنبيهات لعرضها عند تحميل التطبيق
+            checkNotifications();
+            // تحديث حالة الأيام
+            updateDayStatus();
+            // عرض قائمة المواعيد
             updateAppointmentList();
-            document.querySelector('.day').classList.add('active');
+            // تفعيل أول تبويب
+            document.querySelector('.tab').classList.add('active');
+            
+            // طلب إذن التنبيهات في المتصفحات الحديثة
+            requestNotificationPermission();
         };
-
-        function selectDay(day) {
-            selectedDay = day;
-            document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
-            event.target.classList.add('active');
-            updateAppointmentList();
-        }
-
-        function addAppointment() {
-            const input = document.getElementById('appointment').value;
-            const dateInput = document.getElementById('appointmentDate').value;
-            if (input && dateInput) {
-                if (!appointments[selectedDay]) {
-                    appointments[selectedDay] = [];
-                }
-                const appointment = { text: input, date: dateInput };
-                appointments[selectedDay].push(appointment);
-                document.getElementById('appointment').value = '';
-                document.getElementById('appointmentDate').value = '';
-                saveAppointments(); // حفظ تلقائي
-                updateAppointmentList();
-                checkExpiredAndImportant();
+        
+        // دالة لطلب إذن التنبيهات
+        function requestNotificationPermission() {
+            if ('Notification' in window) {
+                Notification.requestPermission();
             }
         }
-
-        function editAppointment(day, index) {
-            const appointment = appointments[day][index];
-            const newText = prompt('تعديل الموعد:', appointment.text);
-            const newDate = prompt('تعديل التاريخ (YYYY-MM-DD):', appointment.date);
-            if (newText && newDate) {
-                appointments[day][index] = { text: newText, date: newDate };
-                saveAppointments(); // حفظ تلقائي
-                updateAppointmentList();
-                checkExpiredAndImportant();
+        
+        // دالة للتحقق من التنبيهات
+        function checkNotifications() {
+            if (!('Notification' in window)) return;
+            
+            Object.keys(appointments).forEach(day => {
+                appointments[day].forEach(appointment => {
+                    if (appointment.reminder && appointment.reminder !== 'none') {
+                        checkReminder(appointment);
+                    }
+                });
+            });
+        }
+        
+        // دالة للتحقق من وقت التذكير
+        function checkReminder(appointment) {
+            if (appointment.notified || appointment.completed) return;
+            
+            const now = new Date();
+            const appointmentDateTime = new Date(appointment.date);
+            if (appointment.time) {
+                const [hours, minutes] = appointment.time.split(':');
+                appointmentDateTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+            } else {
+                appointmentDateTime.setHours(9, 0, 0, 0); // افتراضي الساعة 9 صباحاً
+            }
+            
+            let reminderTime;
+            switch (appointment.reminder) {
+                case '15min':
+                    reminderTime = new Date(appointmentDateTime.getTime() - 15 * 60 * 1000);
+                    break;
+                case '30min':
+                    reminderTime = new Date(appointmentDateTime.getTime() - 30 * 60 * 1000);
+                    break;
+                case '1hour':
+                    reminderTime = new Date(appointmentDateTime.getTime() - 60 * 60 * 1000);
+                    break;
+                case '1day':
+                    reminderTime = new Date(appointmentDateTime.getTime() - 24 * 60 * 60 * 1000);
+                    break;
+                default:
+                    return;
+            }
+            
+            if (now >= reminderTime && now <= appointmentDateTime) {
+                showNotification(appointment);
+                appointment.notified = true;
             }
         }
-
-        function deleteAppointment(day, index) {
-            appointments[day].splice(index, 1);
-            if (appointments[day].length === 0) delete appointments[day];
-            saveAppointments(); // حفظ تلقائي
-            updateAppointmentList();
-            checkExpiredAndImportant();
-        }
-
-        function saveAppointments() {
-            localStorage.setItem('appointments', JSON.stringify(appointments));
-        }
-
-        function updateAppointmentList() {
-            const list = document.getElementById('appointmentList');
-            list.innerHTML = '';
-            if (appointments[selectedDay]) {
-                appointments[selectedDay].forEach((app, index) => {
-                    const li = document.createElement('li');
-                    li.innerHTML = `${app.text} - ${app.date} 
-                        <div>
-                            <button onclick="editAppointment('${selectedDay}', ${index})">تعديل</button>
-                            <button onclick="deleteAppointment('${selectedDay}', ${index})">حذف</button>
-                        </div>`;
-                    list.appendChild(li);
+        
+        // دالة لإظهار التنبيه
+        function showNotification(appointment) {
+            if (Notification.permission === 'granted') {
+                const notification = new Notification('تذكير بموعد', {
+                    body: `${appointment.title}: ${formatDate(appointment.date)} ${formatTime(appointment.time)}`,
+                    icon: 'https://cdn.pixabay.com/photo/2017/03/17/05/20/info-2150938_1280.png'
+                });
+                
+                notification.onclick = function() {
+                    window.focus();
+                };
+            } else if (Notification.permission !== 'denied') {
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        showNotification(appointment);
+                    }
                 });
             }
         }
-
-        function checkExpiredAndImportant() {
-            document.querySelectorAll('.day').forEach(dayElement => {
-                const dayName = dayElement.textContent;
-                dayElement.classList.remove('expired', 'important');
-                if (appointments[dayName] && appointments[dayName].length > 0) {
-                    const hasExpired = appointments[dayName].some(app => new Date(app.date) < currentDate);
-                    if (hasExpired) {
-                        dayElement.classList.add('expired');
-                    }
-                    const hasImportant = appointments[dayName].some(app => app.text.includes('مهم'));
-                    if (hasImportant) {
-                        dayElement.classList.add('important');
-                    }
-                }
-            });
+        
+        // دالة لاختيار اليوم
+        function selectDay(day) {
+            selectedDay = day;
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            updateAppointmentList();
         }
-    </script>
-</body>
-</html>
+        
+        // دالة لإضافة موعد جديد
+        function addAppointment() {
+            const title = document.getElementById('appointmentTitle').value;
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('appointmentTime').value;
+            const priority = document.getElementById('appointmentPriority').value;
+            const repeat = document.getElementById('appointmentRepeat').value;
+            const description = document.getElementById('appointmentDescription').value;
+            const reminder = document.getElementById('appointmentReminder').value;
+            const location = document.getElementById('appointmentLocation').value;
+            
+            if (title && date) {
+                if (!appointments[selectedDay]) {
+                    appointments[selectedDay] = [];
+                }
+                
+                const appointment = {
+                    id: generateId(),
+                    title,
+                    date,
+                    time,
+                    priority,
+                    repeat,
+                    description,
+                    reminder,
+                    location,
+                    completed: false,
+                    created: new Date().toISOString()
+                };
+                
+                appointments[selectedDay].push(appointment);
+                
+                // إفراغ الحقول
+                document.getElementById('appointmentTitle').value = '';
+                document.getElementById('appointmentDate').value = '';
+                document.getElementById('appointmentTime').value = '';
+                document.getElementById('appointmentPriority').value = 'normal';
+                document.getElementById('appointmentRepeat').value = 'none';
+                document.getElementById('appointmentDescription').value = '';
+                document.getElementById('appointmentReminder').value = 'none';
+                document.getElementById('appointmentLocation').value = '';
+                
+                // تحديث الواجهة
+                updateAppointmentList();
+                updateDayStatus();
+                
+                // إنشاء تنبيه بنجاح الإضافة
+                const alert = document.createElement('div');
+                alert.style.position = 'fixed';
+                alert.style.top = '20px';
+                alert.style.left = '50%';
+                alert.style.transform = 'translateX(-50%)';
+                alert.style.backgroundColor = '#4CAF50';
+                alert.style.color = 'white';
+                alert.style.padding = '15px 20px';
+                alert.style.borderRadius = '10px';
+                alert.style.zIndex = '1000';
+                alert.textContent = 'تم إضافة الموعد بنجاح';
+                document.body.appendChild(alert);
+                
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transition = 'opacity 0.5s';
+                    setTimeout(() => {
+                        document.body.removeChild(alert);
+                    }, 500);
+                }, 2000);
+            } else {
+                alert('يرجى إدخال عنوان الموعد والتاريخ على الأقل');
+            }
+        }
+        
+        // دالة تعديل الموعد
+        function editAppointment(day, id) {
+            const appointmentIndex = appointments[day].findIndex(app => app.id === id);
+            if (appointmentIndex === -1) return;
+            
+            const appointment = appointments[day][appointmentIndex];
+            
+            document.getElementById('appointmentTitle').value = appointment.title || '';
+            document.getElementById('appointmentDate').value = appointment.date || '';
+            document.getElementById('appointmentTime').value = appointment.time || '';
+            document.getElementById('appointmentPriority').value = appointment.priority || 'normal';
+            document.getElementById('appointmentRepeat').value = appointment.repeat || 'none';
+            document.getElementById('appointmentDescription').value = appointment.description || '';
+            document.getElementById('appointmentReminder').value = appointment.reminder || 'none';
+            document.getElementById('appointmentLocation').value = appointment.location || '';
+            
+            // حذف الموعد القديم
+            appointments[day].splice(appointmentIndex, 1);
+            
+            // التمرير إلى أعلى للسماح للمستخدم بتعديل البيانات
+            document.querySelector('.appointment-input').scrollIntoView({ behavior: 'smooth' });
+            
+            // تنبيه المستخدم
+            alert('يرجى تعديل بيانات الموعد ثم الضغط على "إضافة الموعد" للحفظ');
+            
+            updateAppointmentList();
+        }
+        
+        // دالة حذف الموعد
+        function deleteAppointment(day, id) {
+            if (confirm('هل أنت متأكد من حذف هذا الموعد؟')) {
+                const index = appointments[day].findIndex(app => app.id === id);
+                appointments[day].splice(index, 1);
+                
+                if (appointments[day].length === 0) delete appointments[day];
+                
+                updateAppointmentList();
+                updateDayStatus();
+                
+                // تنبيه المستخدم
+                const alert = document.createElement('div');
+                alert.style.position = 'fixed';
+                alert.style.top
