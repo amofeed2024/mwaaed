@@ -3,717 +3,430 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مواعيد أشرف مفيد</title>
+    <title>علوي أون لاين - مُحدّث الصفحات</title>
     <style>
         body {
-            font-family: 'Tajawal', Arial, sans-serif;
-            background-color: #e6f0fa; /* أزرق فاتح للخلفية الخارجية */
-            color: #003087;
+            background-color: #e6f3ff;
+            font-family: Arial, sans-serif;
             direction: rtl;
             margin: 0;
-            padding: 10px;
-            min-height: 100vh;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 100vh;
         }
+
         .container {
+            max-width: 800px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #003087;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        input[type="text"] {
+            padding: 12px;
+            width: 60%;
+            border: 2px solid #003087;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            border-color: #0044cc;
+        }
+
+        button {
+            padding: 12px 24px;
+            background-color: #003087;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0044cc;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        #preview {
+            margin: 20px auto;
+            position: relative;
             width: 100%;
             max-width: 600px;
-            background-color: #d3d3d3; /* رمادي فاتح لخلفية التطبيق */
-            padding: 15px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            position: relative;
+            height: 300px;
+            border: 1px solid #003087;
+            border-radius: 5px;
+            overflow: hidden;
         }
-        h1 {
-            text-align: center;
+
+        #previewFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background-color: white;
+        }
+
+        #statusMessage {
             color: #003087;
-            font-size: 1.5em;
+            font-size: 14px;
+            margin-top: 10px;
+            min-height: 20px;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #d32f2f !important;
+        }
+
+        .success {
+            color: #388e3c !important;
+        }
+
+        .stats {
+            background-color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border: 2px solid #003087;
+            font-size: 16px;
+        }
+
+        .stats p {
             margin: 10px 0;
         }
-        .days {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            gap: 10px;
-            margin: 15px 0;
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
-        .day {
-            background-color: #003087;
-            color: white;
-            padding: 10px;
-            border-radius: 8px;
-            width: 20%;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
-            position: relative;
-            font-size: 0.9em;
-        }
-        .day:hover {
-            background-color: #ff8c00;
-            transform: scale(1.05);
-        }
-        .day.active {
-            background-color: #ff8c00;
-            transform: scale(1.05);
-        }
-        .day.expired::after {
-            content: "!";
-            color: red;
-            font-weight: bold;
-            position: absolute;
-            top: 2px;
-            right: 5px;
-        }
-        .day.important {
+
+        .status-active {
+            background-color: #4CAF50;
             animation: blink 1s infinite;
         }
+
+        .status-inactive {
+            background-color: #F44336;
+        }
+
         @keyframes blink {
-            50% { background-color: red; color: white; }
+            50% {
+                opacity: 0.5;
+            }
         }
-        .search-bar {
-            display: flex;
-            margin-bottom: 15px;
-            gap: 10px;
-        }
-        .search-bar input {
-            flex-grow: 1;
-        }
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 10px;
-        }
-        .filter-btn {
-            background-color: #ecf2ff;
-            color: #003087;
-            border: none;
-            border-radius: 15px;
-            padding: 8px 12px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: all 0.3s;
-        }
-        .filter-btn.active {
-            background-color: #003087;
-            color: white;
-        }
-        .appointments {
-            margin-top: 20px;
-        }
-        .appointment-input {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 15px;
-            background-color: #f7f9ff;
-            padding: 15px;
-            border-radius: 10px;
-        }
-        .flex-row {
-            display: flex;
-            gap: 10px;
-        }
-        .flex-row > div {
-            flex: 1;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select, textarea, button {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: 'Tajawal', Arial, sans-serif;
-        }
-        input, select, textarea {
-            background-color: #f0f8ff;
-            color: #003087;
-            width: 100%;
-            box-sizing: border-box;
-            border: 1px solid #d0d0d0;
-        }
-        button {
-            background-color: #ff8c00;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-        button:hover {
-            background-color: #e07b00;
-            transform: scale(1.02);
-        }
-        .appointment-list {
-            list-style: none;
-            padding: 0;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-        .appointment-list li {
-            background-color: #f0f8ff;
-            padding: 10px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.9em;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        }
-        .appointment-list li.important {
-            border-right: 3px solid #ff8c00;
-        }
-        .appointment-list li.expired {
-            border-right: 3px solid #ff3b30;
-        }
-        .appointment-list li button {
-            margin-left: 5px;
-            padding: 5px 10px;
-            font-size: 0.8em;
-        }
-        .save-btn {
-            width: 100%;
-            margin-top: 15px;
-            background-color: #003087;
-        }
-        .loading {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(255, 255, 255, 0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #003087;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .success-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(76, 175, 80, 0.9);
-            color: white;
-            padding: 20px 30px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 18px;
-            font-weight: bold;
-            z-index: 1001;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            display: none;
-        }
+
         .footer {
+            margin-top: 20px;
             text-align: center;
             color: #003087;
-            font-size: 0.8em;
-            margin-top: 20px;
-        }
-        @media (max-width: 480px) {
-            .day {
-                width: 22%; /* لضمان 4 أيقونات في كل صف */
-            }
-            h1 {
-                font-size: 1.2em;
-            }
-            input, button {
-                padding: 10px;
-                font-size: 0.9em;
-            }
-            .appointment-list li {
-                font-size: 0.8em;
-            }
-            .container {
-                padding: 10px;
-            }
+            font-size: 14px;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="loading">
-        <div class="loading-spinner"></div>
-    </div>
-    
-    <div id="successMessage" class="success-message">
-        <div style="margin-bottom: 10px;">✓</div>
-        <div>تم حفظ المواعيد بنجاح</div>
-    </div>
-    
     <div class="container">
-        <h1>مواعيد أشرف مفيد</h1>
+        <h1>علوي أون لاين - مُحدّث الصفحات</h1>
         
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="ابحث عن موعد...">
-            <button onclick="searchAppointments()">بحث</button>
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="أدخل رابط الصفحة هنا (مثال: https://www.example.com)" dir="ltr">
+            <button id="startBtn">بدء</button>
+            <button id="stopBtn" disabled>إيقاف</button>
         </div>
-        
-        <div class="filters">
-            <button class="filter-btn active" onclick="filterAppointments('all')">الكل</button>
-            <button class="filter-btn" onclick="filterAppointments('important')">مهم</button>
-            <button class="filter-btn" onclick="filterAppointments('today')">اليوم</button>
-            <button class="filter-btn" onclick="filterAppointments('expired')">منتهية</button>
+
+        <div id="statusMessage"></div>
+
+        <div class="stats">
+            <p>
+                <span class="status-indicator" id="statusIndicator"></span>
+                الحالة: <span id="statusText">غير نشط</span>
+            </p>
+            <p>تاريخ اليوم: <span id="currentDate"></span></p>
+            <p>وقت بدء التشغيل: <span id="startTime">-</span></p>
+            <p>عدد الزيارات: <span id="visitCount">0</span></p>
+            <p>آخر تحديث: <span id="lastUpdate">-</span></p>
         </div>
-        
-        <div class="days">
-            <div class="day" onclick="selectDay('السبت')">السبت</div>
-            <div class="day" onclick="selectDay('الأحد')">الأحد</div>
-            <div class="day" onclick="selectDay('الإثنين')">الإثنين</div>
-            <div class="day" onclick="selectDay('الثلاثاء')">الثلاثاء</div>
-            <div class="day" onclick="selectDay('الأربعاء')">الأربعاء</div>
-            <div class="day" onclick="selectDay('الخميس')">الخميس</div>
-            <div class="day" onclick="selectDay('الجمعة')">الجمعة</div>
-            <div class="day" onclick="selectDay('ملاحظات')">ملاحظات</div>
+
+        <div id="preview">
+            <iframe id="previewFrame" sandbox="allow-same-origin allow-scripts" title="معاينة الموقع"></iframe>
         </div>
-        
-        <div class="appointments">
-            <div id="addNewSection" style="text-align: center; margin: 15px 0;">
-                <button id="addNewButton" onclick="showInputForm()">إضافة موعد جديد</button>
-            </div>
-            
-            <div id="appointmentInputForm" class="appointment-input" style="display: none;">
-                <input type="hidden" id="editingId" value="">
-                <input type="hidden" id="editingDay" value="">
-                
-                <div class="flex-row">
-                    <div>
-                        <label for="appointment">عنوان الموعد</label>
-                        <input type="text" id="appointment" placeholder="مثال: لقاء مع العميل">
-                    </div>
-                    <div>
-                        <label for="appointmentDate">التاريخ</label>
-                        <input type="date" id="appointmentDate">
-                    </div>
-                </div>
-                
-                <div class="flex-row">
-                    <div>
-                        <label for="appointmentTime">الوقت</label>
-                        <input type="time" id="appointmentTime">
-                    </div>
-                    <div>
-                        <label for="isPriority">الأهمية</label>
-                        <select id="isPriority">
-                            <option value="normal">عادي</option>
-                            <option value="important">مهم</option>
-                        </select>
-                    </div>
-                </div>
-                
-                <div>
-                    <label for="appointmentDetails">تفاصيل إضافية</label>
-                    <textarea id="appointmentDetails" rows="3" placeholder="أضف تفاصيل أو ملاحظات إضافية هنا..."></textarea>
-                </div>
-                
-                <div class="flex-row">
-                    <button onclick="saveAppointment()">حفظ الموعد</button>
-                    <button onclick="hideInputForm()" style="background-color: #888;">إلغاء</button>
-                </div>
-            </div>
-            
-            <ul id="appointmentList" class="appointment-list"></ul>
-            
-            <button class="save-btn" onclick="manualSaveAppointments()">تحديث المواعيد</button>
-        </div>
-        
+
         <div class="footer">
-            <p>تطبيق تنظيم المواعيد - النسخة 2.0</p>
-            <p>مطور ومشغل بواسطة - LEO-AI</p>
+            تطوير وتشغيل ليوميديا © 2025
         </div>
     </div>
 
     <script>
-        // بيانات المواعيد المضمنة - يتم تحديثها في الذاكرة
-        // هذه البيانات ستظل متاحة طالما أن المتصفح مفتوح والصفحة لم يتم تحديثها
-        const defaultAppointments = {
-            'السبت': [
-                {
-                    id: 1,
-                    text: 'لقاء مع العميل',
-                    date: '2025-03-08',
-                    time: '10:30',
-                    isPriority: 'important',
-                    details: 'مناقشة مشروع جديد'
+        // عناصر DOM
+        const urlInput = document.getElementById('urlInput');
+        const previewFrame = document.getElementById('previewFrame');
+        const statusMessage = document.getElementById('statusMessage');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const currentDateEl = document.getElementById('currentDate');
+        const startTimeEl = document.getElementById('startTime');
+        const visitCountEl = document.getElementById('visitCount');
+        const lastUpdateEl = document.getElementById('lastUpdate');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
+
+        // متغيرات عامة
+        let refreshInterval;
+        let visitCount = 0;
+        let startTime;
+        let isActive = false;
+        const REFRESH_INTERVAL = 2000; // 2 ثانية
+
+        // تحديث تاريخ اليوم
+        const today = new Date();
+        currentDateEl.textContent = today.toLocaleDateString('ar', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        // استرجاع البيانات من التخزين المحلي
+        function loadStoredData() {
+            try {
+                const storedCount = localStorage.getItem('alawi_visitCount');
+                const storedTime = localStorage.getItem('alawi_startTime');
+                
+                if (storedCount) {
+                    visitCount = parseInt(storedCount);
+                    visitCountEl.textContent = visitCount.toLocaleString('ar-EG');
                 }
-            ],
-            'الإثنين': [
-                {
-                    id: 2,
-                    text: 'اجتماع فريق العمل',
-                    date: '2025-03-10',
-                    time: '14:00',
-                    isPriority: 'normal',
-                    details: 'مراجعة تقدم المشروع'
+                
+                if (storedTime) {
+                    startTime = new Date(storedTime);
+                    startTimeEl.textContent = formatDate(startTime);
                 }
-            ]
-        };
-        
-        // المتغيرات الرئيسية للتطبيق
-        let selectedDay = 'السبت';
-        let appointments = { ...defaultAppointments };
-        let currentFilter = 'all';
-        let searchQuery = '';
-        const currentDate = new Date();
-        
-        // إظهار/إخفاء نموذج إضافة موعد
-        function showInputForm() {
-            // تفريغ حقول التعديل الخفية
-            document.getElementById('editingId').value = '';
-            document.getElementById('editingDay').value = '';
-            
-            // إظهار النموذج
-            document.getElementById('appointmentInputForm').style.display = 'block';
-            document.getElementById('addNewButton').style.display = 'none';
-            
-            // مسح الحقول من أي بيانات سابقة
-            document.getElementById('appointment').value = '';
-            document.getElementById('appointmentDate').value = '';
-            document.getElementById('appointmentTime').value = '';
-            document.getElementById('isPriority').value = 'normal';
-            document.getElementById('appointmentDetails').value = '';
+
+                // استرجاع الرابط السابق إن وجد
+                const storedUrl = localStorage.getItem('alawi_url');
+                if (storedUrl) {
+                    urlInput.value = storedUrl;
+                    showPreview();
+                }
+            } catch (error) {
+                console.error('خطأ في استرجاع البيانات:', error);
+                // إعادة تعيين التخزين المحلي إذا كان هناك خطأ
+                localStorage.removeItem('alawi_visitCount');
+                localStorage.removeItem('alawi_startTime');
+                localStorage.removeItem('alawi_url');
+            }
         }
-        
-        function hideInputForm() {
-            document.getElementById('appointmentInputForm').style.display = 'none';
-            document.getElementById('addNewButton').style.display = 'inline-block';
-        }
-        
-        // تحديث اليوم المحدد
-        function selectDay(day) {
-            selectedDay = day;
-            document.querySelectorAll('.day').forEach(d => d.classList.remove('active'));
-            event.target.classList.add('active');
-            updateAppointmentList();
-        }
-        
-        // بحث عن المواعيد
-        function searchAppointments() {
-            searchQuery = document.getElementById('searchInput').value.trim().toLowerCase();
-            updateAppointmentList();
-        }
-        
-        // تصفية المواعيد
-        function filterAppointments(filter) {
-            currentFilter = filter;
-            
-            // تحديث زر التصفية النشط
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('active');
+
+        // تنسيق التاريخ والوقت
+        function formatDate(date) {
+            if (!date) return '-';
+            return date.toLocaleString('ar', {
+                year: 'numeric',
+                month: 'numeric',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
-            event.target.classList.add('active');
-            
-            updateAppointmentList();
         }
-        
-        // إضافة أو تعديل موعد
-        function saveAppointment() {
-            const text = document.getElementById('appointment').value;
-            const date = document.getElementById('appointmentDate').value;
-            const time = document.getElementById('appointmentTime').value;
-            const isPriority = document.getElementById('isPriority').value;
-            const details = document.getElementById('appointmentDetails').value;
+
+        // التحقق من صحة الرابط
+        function isValidUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+            } catch (e) {
+                return false;
+            }
+        }
+
+        // عرض المعاينة فور إدخال الرابط
+        function showPreview() {
+            const url = urlInput.value.trim();
             
-            // معرف وتاريخ التعديل
-            const editingId = document.getElementById('editingId').value;
-            const editingDay = document.getElementById('editingDay').value;
-            
-            if (text && date) {
-                // حالة التعديل
-                if (editingId && editingDay) {
-                    // حذف الموعد القديم إذا تم نقله إلى يوم آخر
-                    if (editingDay !== selectedDay) {
-                        if (appointments[editingDay]) {
-                            const index = appointments[editingDay].findIndex(app => app.id == editingId);
-                            if (index !== -1) {
-                                appointments[editingDay].splice(index, 1);
-                                
-                                // حذف اليوم إذا أصبح فارغاً
-                                if (appointments[editingDay].length === 0) {
-                                    delete appointments[editingDay];
-                                }
-                            }
-                        }
-                    } else {
-                        // حذف الموعد القديم من نفس اليوم
-                        if (appointments[selectedDay]) {
-                            const index = appointments[selectedDay].findIndex(app => app.id == editingId);
-                            if (index !== -1) {
-                                appointments[selectedDay].splice(index, 1);
-                            }
-                        }
-                    }
-                }
-                
-                // إنشاء الموعد الجديد
-                if (!appointments[selectedDay]) {
-                    appointments[selectedDay] = [];
-                }
-                
-                const appointment = {
-                    text,
-                    date,
-                    time,
-                    isPriority,
-                    details,
-                    id: editingId || Date.now()
+            if (isValidUrl(url)) {
+                updateStatus('جارِ تحميل المعاينة...', 'normal');
+                previewFrame.src = url;
+                previewFrame.onload = () => {
+                    updateStatus('تم تحميل المعاينة بنجاح', 'success');
                 };
-                
-                appointments[selectedDay].push(appointment);
-                
-                // إخفاء نموذج الإدخال
-                hideInputForm();
-                
-                // تحديث الواجهة
-                updateAppointmentList();
-                checkExpiredAndImportant();
-                
-                // إظهار رسالة النجاح
-                showSuccessMessage(editingId ? "تم تعديل الموعد بنجاح" : "تم إضافة الموعد بنجاح");
+                previewFrame.onerror = () => {
+                    updateStatus('تعذر تحميل المعاينة', 'error');
+                };
+            } else if (url) {
+                updateStatus('يرجى إدخال رابط صالح يبدأ بـ http:// أو https://', 'error');
+                previewFrame.src = 'about:blank';
             } else {
-                alert('يرجى إدخال عنوان الموعد والتاريخ على الأقل');
+                updateStatus('', 'normal');
+                previewFrame.src = 'about:blank';
             }
         }
-        
-        // تعديل موعد
-        function editAppointment(day, id) {
-            if (!appointments[day]) return;
-            
-            const appointmentIndex = appointments[day].findIndex(app => app.id == id);
-            if (appointmentIndex === -1) return;
-            
-            const appointment = appointments[day][appointmentIndex];
-            
-            // حفظ معرف الموعد واليوم للتعديل لاحقاً
-            document.getElementById('editingId').value = id;
-            document.getElementById('editingDay').value = day;
-            
-            // ملء النموذج بالبيانات الحالية
-            document.getElementById('appointment').value = appointment.text || '';
-            document.getElementById('appointmentDate').value = appointment.date || '';
-            document.getElementById('appointmentTime').value = appointment.time || '';
-            document.getElementById('isPriority').value = appointment.isPriority || 'normal';
-            document.getElementById('appointmentDetails').value = appointment.details || '';
-            
-            // عرض النموذج
-            document.getElementById('appointmentInputForm').style.display = 'block';
-            document.getElementById('addNewButton').style.display = 'none';
+
+        // تحديث رسالة الحالة
+        function updateStatus(message, type = 'normal') {
+            statusMessage.textContent = message;
+            statusMessage.className = '';
+            if (type === 'error') {
+                statusMessage.classList.add('error');
+            } else if (type === 'success') {
+                statusMessage.classList.add('success');
+            }
         }
-        
-        // حذف موعد
-        function deleteAppointment(day, id) {
-            if (confirm('هل أنت متأكد من حذف هذا الموعد؟')) {
-                if (!appointments[day]) return;
+
+        // تحديث حالة النظام
+        function updateSystemStatus(active) {
+            isActive = active;
+            if (active) {
+                statusIndicator.className = 'status-indicator status-active';
+                statusText.textContent = 'نشط - جارِ التحديث';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                statusIndicator.className = 'status-indicator status-inactive';
+                statusText.textContent = 'غير نشط';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
+        }
+
+        // زيارة الرابط فعليًا
+        async function visitUrl(url) {
+            try {
+                const timestamp = new Date();
+                lastUpdateEl.textContent = formatDate(timestamp);
                 
-                const index = appointments[day].findIndex(app => app.id == id);
-                if (index !== -1) {
-                    appointments[day].splice(index, 1);
-                    
-                    // حذف اليوم إذا أصبح فارغاً
-                    if (appointments[day].length === 0) {
-                        delete appointments[day];
+                // إنشاء العنصر لتحميل الرابط
+                const visitImage = new Image();
+                visitImage.src = url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now();
+                
+                // استخدام fetch أيضًا كطريقة بديلة
+                await fetch(url, { 
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache'
                     }
-                    
-                    // تحديث الواجهة
-                    updateAppointmentList();
-                    checkExpiredAndImportant();
-                    
-                    showSuccessMessage("تم حذف الموعد بنجاح");
+                });
+                
+                // زيادة العداد
+                visitCount++;
+                visitCountEl.textContent = visitCount.toLocaleString('ar-EG');
+                
+                // حفظ البيانات
+                saveData();
+                
+                // تحديث المعاينة أحيانًا
+                if (visitCount % 10 === 0) { // كل 10 زيارات
+                    previewFrame.src = url + (url.includes('?') ? '&' : '?') + '_refresh=' + Date.now();
                 }
+                
+                return true;
+            } catch (error) {
+                console.error('خطأ في زيارة الرابط:', error);
+                // نستمر في زيادة العداد حتى في حالة الفشل
+                visitCount++;
+                visitCountEl.textContent = visitCount.toLocaleString('ar-EG');
+                saveData();
+                return false;
             }
         }
-        
-        // حفظ المواعيد يدوياً
-        function manualSaveAppointments() {
-            // إظهار مؤشر التحميل
-            document.querySelector('.loading').style.display = 'flex';
-            
-            setTimeout(() => {
-                // هنا نحن فقط نعرض رسالة النجاح حيث أن البيانات محفوظة مباشرة في الذاكرة
-                document.querySelector('.loading').style.display = 'none';
-                showSuccessMessage("تم تحديث المواعيد بنجاح");
-            }, 500);
+
+        // حفظ البيانات
+        function saveData() {
+            try {
+                localStorage.setItem('alawi_visitCount', visitCount.toString());
+                localStorage.setItem('alawi_startTime', startTime ? startTime.toISOString() : '');
+                localStorage.setItem('alawi_url', urlInput.value.trim());
+            } catch (error) {
+                console.error('خطأ في حفظ البيانات:', error);
+            }
         }
-        
-        // إظهار رسالة النجاح
-        function showSuccessMessage(message) {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.querySelector('div:last-child').textContent = message;
-            successMessage.style.display = 'block';
+
+        // بدء التحديث التلقائي
+        function startRefresh() {
+            const url = urlInput.value.trim();
             
-            setTimeout(() => {
-                successMessage.style.opacity = '0';
-                successMessage.style.transition = 'opacity 0.5s';
-                
-                setTimeout(() => {
-                    successMessage.style.display = 'none';
-                    successMessage.style.opacity = '1';
-                }, 500);
-            }, 2000);
-        }
-        
-        // تحديث قائمة المواعيد
-        function updateAppointmentList() {
-            const list = document.getElementById('appointmentList');
-            list.innerHTML = '';
-            
-            if (!appointments[selectedDay] || appointments[selectedDay].length === 0) {
-                list.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">لا توجد مواعيد مسجلة</div>';
+            if (!isValidUrl(url)) {
+                updateStatus('يرجى إدخال رابط صالح يبدأ بـ http:// أو https://', 'error');
                 return;
             }
-            
-            // ترتيب المواعيد من الأقدم إلى الأحدث
-            let filteredAppointments = [...appointments[selectedDay]];
-            filteredAppointments.sort((a, b) => new Date(a.date) - new Date(b.date));
-            
-            // تطبيق البحث
-            if (searchQuery) {
-                filteredAppointments = filteredAppointments.filter(app => 
-                    app.text.toLowerCase().includes(searchQuery) || 
-                    (app.details && app.details.toLowerCase().includes(searchQuery))
-                );
+
+            // تعيين وقت البدء إذا لم يكن محددًا
+            if (!startTime) {
+                startTime = new Date();
+                startTimeEl.textContent = formatDate(startTime);
             }
-            
-            // تطبيق الفلتر
-            if (currentFilter !== 'all') {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                
-                if (currentFilter === 'important') {
-                    filteredAppointments = filteredAppointments.filter(app => app.isPriority === 'important' || app.text.includes('مهم'));
-                } else if (currentFilter === 'today') {
-                    filteredAppointments = filteredAppointments.filter(app => {
-                        const appDate = new Date(app.date);
-                        appDate.setHours(0, 0, 0, 0);
-                        return appDate.getTime() === today.getTime();
-                    });
-                } else if (currentFilter === 'expired') {
-                    filteredAppointments = filteredAppointments.filter(app => {
-                        const appDate = new Date(app.date);
-                        appDate.setHours(0, 0, 0, 0);
-                        return appDate < today;
-                    });
-                }
-            }
-            
-            if (filteredAppointments.length === 0) {
-                list.innerHTML = '<div style="text-align: center; padding: 20px; color: #888;">لا توجد مواعيد تطابق البحث أو التصفية</div>';
-                return;
-            }
-            
-            filteredAppointments.forEach(app => {
-                const li = document.createElement('li');
-                
-                // إضافة تصنيف للمواعيد المهمة والمنتهية
-                if (app.isPriority === 'important' || app.text.includes('مهم')) {
-                    li.classList.add('important');
-                }
-                
-                const appDate = new Date(app.date);
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                appDate.setHours(0, 0, 0, 0);
-                
-                if (appDate < today) {
-                    li.classList.add('expired');
-                }
-                
-                // تنسيق التاريخ والوقت
-                let formattedDate;
-                try {
-                    formattedDate = new Date(app.date).toLocaleDateString('ar-SA');
-                } catch (e) {
-                    formattedDate = app.date;
-                }
-                
-                const timeInfo = app.time ? `الساعة ${app.time}` : '';
-                
-                // تنسيق التفاصيل
-                const details = app.details ? `<div style="margin-top: 5px; color: #666; font-size: 0.9em;">${app.details}</div>` : '';
-                
-                li.innerHTML = `
-                    <div>
-                        <strong>${app.text}</strong>
-                        <div style="color: #666;">${formattedDate} ${timeInfo}</div>
-                        ${details}
-                    </div>
-                    <div>
-                        <button onclick="editAppointment('${selectedDay}', ${app.id})">تعديل</button>
-                        <button onclick="deleteAppointment('${selectedDay}', ${app.id})">حذف</button>
-                    </div>
-                `;
-                
-                list.appendChild(li);
-            });
+
+            // إيقاف أي تحديث سابق
+            stopRefresh();
+
+            // تغيير حالة النظام
+            updateSystemStatus(true);
+            updateStatus('بدأ التحديث التلقائي كل ثانيتين', 'success');
+
+            // زيارة الرابط فورًا
+            visitUrl(url);
+
+            // تحديث كل ثانيتين
+            refreshInterval = setInterval(() => {
+                visitUrl(url);
+            }, REFRESH_INTERVAL);
         }
-        
-        // التحقق من وجود مواعيد منتهية أو مهمة
-        function checkExpiredAndImportant() {
-            document.querySelectorAll('.day').forEach(dayElement => {
-                const dayName = dayElement.textContent;
-                dayElement.classList.remove('expired', 'important');
-                
-                if (appointments[dayName] && appointments[dayName].length > 0) {
-                    // التحقق من وجود مواعيد منتهية
-                    const hasExpired = appointments[dayName].some(app => {
-                        const appDate = new Date(app.date);
-                        appDate.setHours(0, 0, 0, 0);
-                        const today = new Date();
-                        today.setHours(0, 0, 0, 0);
-                        return appDate < today;
-                    });
-                    
-                    if (hasExpired) {
-                        dayElement.classList.add('expired');
-                    }
-                    
-                    // التحقق من وجود مواعيد مهمة
-                    const hasImportant = appointments[dayName].some(app => 
-                        app.isPriority === 'important' || app.text.includes('مهم')
-                    );
-                    
-                    if (hasImportant) {
-                        dayElement.classList.add('important');
-                    }
-                }
-            });
+
+        // إيقاف التحديث
+        function stopRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+                updateSystemStatus(false);
+                updateStatus('تم إيقاف التحديث التلقائي', 'normal');
+            }
         }
-        
-        // عند تحميل الصفحة
-        window.onload = function() {
-            // إظهار مؤشر التحميل
-            document.querySelector('.loading').style.display = 'flex';
+
+        // معالجة الأحداث عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            // استرجاع البيانات المخزنة
+            loadStoredData();
             
-            setTimeout(() => {
-                // تحديث الواجهة
-                checkExpiredAndImportant();
-                updateAppointmentList();
-                
-                // تفعيل التبويب الأول
-                document.querySelector('.day').classList.add('active');
-                
-                // إخفاء مؤشر التحميل
-                document.querySelector('.loading').style.display = 'none';
-            }, 500);
-        };
+            // ربط الأحداث
+            urlInput.addEventListener('input', showPreview);
+            urlInput.addEventListener('paste', () => setTimeout(showPreview, 100));
+            startBtn.addEventListener('click', startRefresh);
+            stopBtn.addEventListener('click', stopRefresh);
+            
+            // التأكد من حالة النظام
+            updateSystemStatus(false);
+        });
+
+        // حفظ البيانات عند إغلاق الصفحة
+        window.addEventListener('beforeunload', saveData);
     </script>
 </body>
 </html>
