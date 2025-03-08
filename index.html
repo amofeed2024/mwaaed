@@ -11,6 +11,15 @@
       padding: 0;
       box-sizing: border-box;
       font-family: 'Cairo', sans-serif;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     body {
@@ -147,14 +156,48 @@
       animation: fadeIn 0.5s ease-in-out;
     }
     
-    @keyframes fadeIn {
+    /* توصيفات الرسائل التنبيهية */
+    .alert-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 15px 25px;
+      border-radius: 10px;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: slideDown 0.5s forwards, fadeOut 0.5s forwards 2.5s;
+      text-align: center;
+    }
+    
+    .success {
+      border-left: 5px solid #4CAF50;
+    }
+    
+    .warning {
+      border-left: 5px solid #FFC107;
+    }
+    
+    @keyframes slideDown {
       from {
+        top: -50px;
         opacity: 0;
-        transform: translateY(20px);
       }
       to {
+        top: 20px;
         opacity: 1;
-        transform: translateY(0);
+      }
+    }
+    
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+        visibility: hidden;
       }
     }
 
@@ -263,7 +306,14 @@
         <div id="start-date" class="stat-value">--/--/----</div>
       </div>
     </div>
+    
+    <div id="developer-credits" class="hidden" style="margin-top: 20px; text-align: center;">
+      <hr style="border: 0; height: 1px; background-color: #fff; margin-bottom: 10px;">
+      <div style="color: #ff9d00; font-weight: bold; font-size: 16px;">تطوير فريق بوابة مصر الآن</div>
+    </div>
   </div>
+  
+
 
   <script>
     // العناصر الرئيسية
@@ -301,6 +351,26 @@
       return url;
     }
     
+    // إظهار رسالة تنبيهية
+    function showAlert(message, type) {
+      // إزالة أي رسائل سابقة
+      const existingAlerts = document.querySelectorAll('.alert-message');
+      existingAlerts.forEach(alert => alert.remove());
+      
+      // إنشاء عنصر الرسالة
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert-message ${type}`;
+      alertDiv.innerText = message;
+      
+      // إضافة الرسالة إلى الصفحة
+      document.body.appendChild(alertDiv);
+      
+      // إزالة الرسالة بعد مرور الوقت
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 3000);
+    }
+    
     // تشغيل العداد
     function startCounter() {
       let url = urlInput.value.trim();
@@ -325,6 +395,7 @@
       websiteIframe.src = url;
       webContainer.classList.remove('hidden');
       statsContainer.classList.remove('hidden');
+      document.getElementById('developer-credits').classList.remove('hidden');
       
       // إعداد الإحصائيات
       viewsCounter = 0;
@@ -339,6 +410,9 @@
       isRunning = true;
       startBtn.disabled = true;
       stopBtn.disabled = false;
+      
+      // إظهار رسالة بدء العداد
+      showAlert("تم بدء العداد بنجاح!", "success");
       
       // الحصول على سرعة التحديث المحددة
       const refreshInterval = parseInt(refreshSpeed.value);
@@ -361,6 +435,9 @@
       clearInterval(viewingInterval);
       startBtn.disabled = false;
       stopBtn.disabled = true;
+      
+      // إظهار رسالة إيقاف العداد
+      showAlert("تم توقف العداد الآن!", "warning");
     }
     
     // إضافة المستمعين للأحداث
