@@ -18,12 +18,15 @@
             margin: 0 auto;
         }
         .days {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
             margin-bottom: 20px;
         }
-        .day {
+        .day-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .day, .notes-button {
             background-color: #2d4b9e;
             padding: 15px;
             text-align: center;
@@ -46,6 +49,13 @@
             0% { opacity: 1; }
             50% { opacity: 0; }
             100% { opacity: 1; }
+        }
+        .notes-container {
+            background-color: #2d4b9e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
         }
         .appointments {
             background-color: #2d4b9e;
@@ -102,7 +112,14 @@
     <div class="container">
         <h1>إدارة مواعيد أشرف مفيد</h1>
         <div class="message" id="saveMessage">تم الحفظ بنجاح</div>
-        <div class="days" id="daysContainer"></div>
+        <div class="days" id="daysContainer">
+            <div class="day-row" id="firstRow"></div>
+            <div class="day-row" id="secondRow"></div>
+        </div>
+        <div class="notes-container" id="notesContainer">
+            <textarea id="notes" placeholder="اكتب ملاحظاتك هنا" rows="6" style="width: 100%;"></textarea>
+            <button onclick="saveNotes()">حفظ الملاحظات</button>
+        </div>
         <div class="form-container">
             <button onclick="showAddForm()">إضافة موعد</button>
             <div id="addForm" style="display: none;">
@@ -128,12 +145,16 @@
 
     <script>
         const days = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-        let appointments = {}; // Internal memory storage
+        let appointments = JSON.parse(localStorage.getItem('appointments')) || {};
+        let notes = localStorage.getItem('notes') || '';
         let selectedDay = null;
 
         function initDays() {
-            const daysContainer = document.getElementById('daysContainer');
-            daysContainer.innerHTML = '';
+            const firstRow = document.getElementById('firstRow');
+            const secondRow = document.getElementById('secondRow');
+            firstRow.innerHTML = '';
+            secondRow.innerHTML = '';
+
             days.forEach((day, index) => {
                 const dayElement = document.createElement('div');
                 dayElement.className = 'day';
@@ -142,12 +163,37 @@
                     dayElement.classList.add('important');
                 }
                 dayElement.onclick = () => showAppointments(index);
-                daysContainer.appendChild(dayElement);
+
+                if (index < 4) {
+                    firstRow.appendChild(dayElement);
+                } else if (index < 7) {
+                    secondRow.appendChild(dayElement);
+                }
             });
+
+            const notesButton = document.createElement('div');
+            notesButton.className = 'notes-button';
+            notesButton.textContent = 'ملاحظات';
+            notesButton.onclick = toggleNotes;
+            secondRow.appendChild(notesButton);
         }
 
         function hasImportantAppointment(dayIndex) {
             return appointments[dayIndex]?.some(app => app.priority === 'important') || false;
+        }
+
+        function toggleNotes() {
+            const notesContainer = document.getElementById('notesContainer');
+            const notesTextarea = document.getElementById('notes');
+            notesTextarea.value = notes; // Load saved notes
+            notesContainer.style.display = notesContainer.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function saveNotes() {
+            notes = document.getElementById('notes').value;
+            localStorage.setItem('notes', notes); // Save notes to localStorage
+            showMessage();
+            toggleNotes();
         }
 
         function showAddForm() {
@@ -170,6 +216,8 @@
 
             if (!appointments[dayIndex]) appointments[dayIndex] = [];
             appointments[dayIndex].push({ date, time, priority, description });
+
+            localStorage.setItem('appointments', JSON.stringify(appointments)); // Save to localStorage
 
             document.getElementById('addForm').style.display = 'none';
             document.getElementById('appDate').value = '';
@@ -219,6 +267,7 @@
             document.getElementById('addForm').style.display = 'block';
 
             appointments[dayIndex].splice(index, 1);
+            localStorage.setItem('appointments', JSON.stringify(appointments)); // Update localStorage
             initDays();
             showAppointments(dayIndex);
         }
@@ -226,6 +275,7 @@
         function deleteAppointment(dayIndex, index) {
             appointments[dayIndex].splice(index, 1);
             if (appointments[dayIndex].length === 0) delete appointments[dayIndex];
+            localStorage.setItem('appointments', JSON.stringify(appointments)); // Update localStorage
             showMessage();
             initDays();
             showAppointments(dayIndex);
