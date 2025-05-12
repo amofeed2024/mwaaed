@@ -3,291 +3,319 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة مواعيد أشرف مفيد</title>
+    <title>علوي أون لاين - مُحدّث الصفحات</title>
     <style>
         body {
-            background-color: #1e3a8a;
-            color: white;
+            background-color: #e6f3ff;
             font-family: Arial, sans-serif;
             direction: rtl;
             margin: 0;
             padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
         .container {
             max-width: 800px;
-            margin: 0 auto;
-        }
-        .days {
-            margin-bottom: 20px;
-        }
-        .day-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .day, .notes-button {
-            background-color: #2d4b9e;
-            padding: 15px;
             text-align: center;
-            border-radius: 5px;
-            cursor: pointer;
-            position: relative;
-        }
-        .day.important::after {
-            content: '';
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            width: 10px;
-            height: 10px;
-            background-color: red;
-            border-radius: 50%;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0; }
-            100% { opacity: 1; }
-        }
-        .notes-container {
-            background-color: #2d4b9e;
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .appointments {
-            background-color: #2d4b9e;
-            padding: 20px;
-            border-radius: 5px;
+        h1 {
+            color: #003087;
             margin-bottom: 20px;
+            font-size: 28px;
         }
-        .appointment {
-            background-color: #3b5998;
-            padding: 10px;
-            margin-bottom: 10px;
+        .input-group {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        input[type="text"] {
+            padding: 12px;
+            width: 60%;
+            border: 2px solid #003087;
             border-radius: 5px;
-            cursor: pointer;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input[type="text"]:focus {
+            border-color: #0044cc;
         }
         button {
-            background-color: #c05621;
+            padding: 12px 24px;
+            background-color: #003087;
             color: white;
             border: none;
-            padding: 10px 20px;
             border-radius: 5px;
             cursor: pointer;
-            margin: 5px;
         }
         button:hover {
-            background-color: #d97706;
+            background-color: #0044cc;
         }
-        input, select, textarea {
-            padding: 8px;
-            margin: 5px;
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        #preview {
+            margin: 20px auto;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            border: 1px solid #003087;
             border-radius: 5px;
+            overflow: hidden;
+        }
+        #previewFrame {
+            width: 100%;
+            height: 100%;
             border: none;
+            background-color: white;
         }
-        .form-container {
-            background-color: #2d4b9e;
-            padding: 20px;
+        #statusMessage {
+            color: #003087;
+            font-size: 14px;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .error { color: #d32f2f !important; }
+        .success { color: #388e3c !important; }
+        .stats {
+            background-color: white;
+            padding: 15px;
             border-radius: 5px;
-            margin-bottom: 20px;
+            margin: 20px 0;
+            border: 2px solid #003087;
+            font-size: 16px;
         }
-        .message {
-            background-color: #2ecc71;
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-            display: none;
+        .stats p { margin: 10px 0; }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
         }
-        .time-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .status-active {
+            background-color: #4CAF50;
+            animation: blink 1s infinite;
+        }
+        .status-inactive { background-color: #F44336; }
+        @keyframes blink {
+            50% { opacity: 0.5; }
+        }
+        .footer {
+            margin-top: 20px;
+            color: #003087;
+            font-size: 14px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>إدارة مواعيد أشرف مفيد</h1>
-        <div class="message" id="saveMessage">تم الحفظ بنجاح</div>
-        <div class="days" id="daysContainer">
-            <div class="day-row" id="firstRow"></div>
-            <div class="day-row" id="secondRow"></div>
+        <h1>علوي أون لاين - مُحدّث الصفحات</h1>
+        
+        <div class="input-group">
+            <input type="text" id="urlInput" placeholder="أدخل أو الصق الرابط هنا (مثال: https://www.example.com)" dir="ltr">
+            <button id="startBtn">بدء</button>
+            <button id="stopBtn" disabled>إيقاف</button>
         </div>
-        <div class="notes-container" id="notesContainer">
-            <textarea id="notes" placeholder="اكتب ملاحظاتك هنا" rows="6" style="width: 100%;"></textarea>
-            <button onclick="saveNotes()">حفظ الملاحظات</button>
+
+        <div id="statusMessage"></div>
+
+        <div class="stats">
+            <p><span class="status-indicator" id="statusIndicator"></span>الحالة: <span id="statusText">غير نشط</span></p>
+            <p>تاريخ اليوم: <span id="currentDate"></span></p>
+            <p>وقت بدء التشغيل: <span id="startTime">-</span></p>
+            <p>عدد الزيارات: <span id="visitCount">0</span></p>
+            <p>آخر تحديث: <span id="lastUpdate">-</span></p>
         </div>
-        <div class="form-container">
-            <button onclick="showAddForm()">إضافة موعد</button>
-            <div id="addForm" style="display: none;">
-                <input type="date" id="appDate">
-                <div class="time-container">
-                    <input type="number" id="appHour" min="1" max="12" placeholder="الساعة">
-                    <input type="number" id="appMinute" min="0" max="59" placeholder="الدقيقة">
-                    <select id="appPeriod">
-                        <option value="ص">ص</option>
-                        <option value="م">م</option>
-                    </select>
-                </div>
-                <select id="appPriority">
-                    <option value="normal">عادي</option>
-                    <option value="important">مهم</option>
-                </select>
-                <textarea id="appDescription" placeholder="وصف الموعد" rows="4" style="width: 100%;"></textarea>
-                <button onclick="saveAppointment()">حفظ</button>
-            </div>
+
+        <div id="preview">
+            <iframe id="previewFrame" sandbox="allow-same-origin allow-scripts" title="معاينة الموقع"></iframe>
         </div>
-        <div class="appointments" id="appointmentsContainer"></div>
+
+        <div class="footer">تطوير وتشغيل ليوميديا © 2025</div>
     </div>
 
     <script>
-        const days = ['السبت', 'الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة'];
-        let appointments = JSON.parse(localStorage.getItem('appointments')) || {};
-        let notes = localStorage.getItem('notes') || '';
-        let selectedDay = null;
+        // عناصر DOM
+        const urlInput = document.getElementById('urlInput');
+        const previewFrame = document.getElementById('previewFrame');
+        const statusMessage = document.getElementById('statusMessage');
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const currentDateEl = document.getElementById('currentDate');
+        const startTimeEl = document.getElementById('startTime');
+        const visitCountEl = document.getElementById('visitCount');
+        const lastUpdateEl = document.getElementById('lastUpdate');
+        const statusIndicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('statusText');
 
-        function initDays() {
-            const firstRow = document.getElementById('firstRow');
-            const secondRow = document.getElementById('secondRow');
-            firstRow.innerHTML = '';
-            secondRow.innerHTML = '';
+        // متغيرات عامة
+        let refreshInterval;
+        let visitCount = 0;
+        let startTime;
+        let isActive = false;
+        const REFRESH_INTERVAL = 2000; // 2 ثانية بين كل تحديث
+        const VISITS_PER_REFRESH = 5; // 5 زيارات لكل تحديث
+        const VISIT_DELAY = 300; // 300 مللي ثانية بين كل زيارة (5 × 300 = 1500 مللي ثانية < 2 ثانية)
 
-            days.forEach((day, index) => {
-                const dayElement = document.createElement('div');
-                dayElement.className = 'day';
-                dayElement.textContent = day;
-                if (hasImportantAppointment(index)) {
-                    dayElement.classList.add('important');
-                }
-                dayElement.onclick = () => showAppointments(index);
+        // تحديث تاريخ اليوم
+        const today = new Date();
+        currentDateEl.textContent = today.toLocaleDateString('ar', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
 
-                if (index < 4) {
-                    firstRow.appendChild(dayElement);
-                } else if (index < 7) {
-                    secondRow.appendChild(dayElement);
-                }
+        // تنسيق التاريخ والوقت
+        function formatDate(date) {
+            if (!date) return '-';
+            return date.toLocaleString('ar', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
             });
-
-            const notesButton = document.createElement('div');
-            notesButton.className = 'notes-button';
-            notesButton.textContent = 'ملاحظات';
-            notesButton.onclick = toggleNotes;
-            secondRow.appendChild(notesButton);
         }
 
-        function hasImportantAppointment(dayIndex) {
-            return appointments[dayIndex]?.some(app => app.priority === 'important') || false;
-        }
-
-        function toggleNotes() {
-            const notesContainer = document.getElementById('notesContainer');
-            const notesTextarea = document.getElementById('notes');
-            notesTextarea.value = notes; // Load saved notes
-            notesContainer.style.display = notesContainer.style.display === 'block' ? 'none' : 'block';
-        }
-
-        function saveNotes() {
-            notes = document.getElementById('notes').value;
-            localStorage.setItem('notes', notes); // Save notes to localStorage
-            showMessage();
-            toggleNotes();
-        }
-
-        function showAddForm() {
-            document.getElementById('addForm').style.display = 'block';
-        }
-
-        function saveAppointment() {
-            const date = document.getElementById('appDate').value;
-            const hour = document.getElementById('appHour').value.padStart(2, '0');
-            const minute = document.getElementById('appMinute').value.padStart(2, '0');
-            const period = document.getElementById('appPeriod').value;
-            const priority = document.getElementById('appPriority').value;
-            const description = document.getElementById('appDescription').value;
-
-            if (!date || !hour || !minute) return;
-
-            const time = `${hour}:${minute} ${period}`;
-            const dateObj = new Date(date);
-            const dayIndex = (dateObj.getDay() + 1) % 7; // Adjust for Saturday start
-
-            if (!appointments[dayIndex]) appointments[dayIndex] = [];
-            appointments[dayIndex].push({ date, time, priority, description });
-
-            localStorage.setItem('appointments', JSON.stringify(appointments)); // Save to localStorage
-
-            document.getElementById('addForm').style.display = 'none';
-            document.getElementById('appDate').value = '';
-            document.getElementById('appHour').value = '';
-            document.getElementById('appMinute').value = '';
-            document.getElementById('appPeriod').value = 'ص';
-            document.getElementById('appPriority').value = 'normal';
-            document.getElementById('appDescription').value = '';
-
-            showMessage();
-            initDays();
-            if (selectedDay === dayIndex) showAppointments(dayIndex);
-        }
-
-        function showAppointments(dayIndex) {
-            selectedDay = dayIndex;
-            const appointmentsContainer = document.getElementById('appointmentsContainer');
-            appointmentsContainer.innerHTML = '';
-            
-            if (appointments[dayIndex]?.length) {
-                appointments[dayIndex].forEach((app, index) => {
-                    const appElement = document.createElement('div');
-                    appElement.className = 'appointment';
-                    appElement.innerHTML = `
-                        ${app.date} ${app.time} - ${app.priority === 'important' ? 'مهم' : 'عادي'}<br>
-                        ${app.description || 'لا يوجد وصف'}
-                        <button onclick="editAppointment(${dayIndex}, ${index})">تعديل</button>
-                        <button onclick="deleteAppointment(${dayIndex}, ${index})">حذف</button>
-                    `;
-                    appointmentsContainer.appendChild(appElement);
-                });
-            } else {
-                appointmentsContainer.textContent = 'لا توجد مواعيد لهذا اليوم';
+        // التحقق من صحة الرابط
+        function isValidUrl(url) {
+            try {
+                new URL(url);
+                return true;
+            } catch (e) {
+                return false;
             }
         }
 
-        function editAppointment(dayIndex, index) {
-            const app = appointments[dayIndex][index];
-            document.getElementById('appDate').value = app.date;
-            const [time, period] = app.time.split(' ');
-            const [hour, minute] = time.split(':');
-            document.getElementById('appHour').value = parseInt(hour);
-            document.getElementById('appMinute').value = parseInt(minute);
-            document.getElementById('appPeriod').value = period;
-            document.getElementById('appPriority').value = app.priority;
-            document.getElementById('appDescription').value = app.description || '';
-            document.getElementById('addForm').style.display = 'block';
-
-            appointments[dayIndex].splice(index, 1);
-            localStorage.setItem('appointments', JSON.stringify(appointments)); // Update localStorage
-            initDays();
-            showAppointments(dayIndex);
+        // عرض المعاينة بناءً على الرابط المدخل
+        function showPreview() {
+            const url = urlInput.value.trim();
+            if (isValidUrl(url)) {
+                previewFrame.src = url;
+                previewFrame.onload = () => {
+                    updateStatus('تم تحميل المعاينة بنجاح', 'success');
+                };
+                previewFrame.onerror = () => {
+                    updateStatus('فشل تحميل المعاينة، تحقق من الرابط أو الاتصال', 'error');
+                };
+            } else {
+                previewFrame.src = 'about:blank';
+                updateStatus('يرجى إدخال رابط صالح (مثال: https://www.example.com)', 'error');
+            }
         }
 
-        function deleteAppointment(dayIndex, index) {
-            appointments[dayIndex].splice(index, 1);
-            if (appointments[dayIndex].length === 0) delete appointments[dayIndex];
-            localStorage.setItem('appointments', JSON.stringify(appointments)); // Update localStorage
-            showMessage();
-            initDays();
-            showAppointments(dayIndex);
+        // تحديث رسالة الحالة
+        function updateStatus(message, type = 'normal') {
+            statusMessage.textContent = message;
+            statusMessage.className = '';
+            if (type === 'error') statusMessage.classList.add('error');
+            else if (type === 'success') statusMessage.classList.add('success');
         }
 
-        function showMessage() {
-            const message = document.getElementById('saveMessage');
-            message.style.display = 'block';
-            setTimeout(() => message.style.display = 'none', 2000);
+        // تحديث حالة النظام
+        function updateSystemStatus(active) {
+            isActive = active;
+            if (active) {
+                statusIndicator.className = 'status-indicator status-active';
+                statusText.textContent = 'نشط - جارِ التحديث';
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } else {
+                statusIndicator.className = 'status-indicator status-inactive';
+                statusText.textContent = 'غير نشط';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+            }
         }
 
-        initDays();
+        // زيارة الرابط
+        function visitUrl(url) {
+            const visitImage = new Image();
+            visitImage.src = url + '?_t=' + Date.now();
+            visitImage.onload = () => {
+                visitCount++;
+                visitCountEl.textContent = visitCount;
+            };
+            visitImage.onerror = () => {
+                console.log('فشل زيارة الرابط');
+            };
+        }
+
+        // تنفيذ التحديث و5 زيارات إضافية
+        function performRefreshAndVisits() {
+            const url = urlInput.value.trim();
+            if (!isValidUrl(url)) {
+                updateStatus('يرجى إدخال رابط صالح قبل البدء', 'error');
+                stopRefresh();
+                return;
+            }
+
+            const timestamp = new Date();
+            lastUpdateEl.textContent = formatDate(timestamp);
+
+            // تحديث الإطار (refresh)
+            previewFrame.src = url + '?_refresh=' + Date.now();
+            visitCount++; // زيادة العداد للتحديث الأساسي
+            visitCountEl.textContent = visitCount;
+
+            // تنفيذ 5 زيارات إضافية
+            for (let i = 0; i < VISITS_PER_REFRESH; i++) {
+                setTimeout(() => {
+                    visitUrl(url);
+                }, i * VISIT_DELAY); // تأخير 300 مللي ثانية بين كل زيارة
+            }
+        }
+
+        // بدء التحديث التلقائي
+        function startRefresh() {
+            if (isActive) return;
+
+            const url = urlInput.value.trim();
+            if (!isValidUrl(url)) {
+                updateStatus('يرجى إدخال رابط صالح قبل البدء', 'error');
+                return;
+            }
+
+            startTime = new Date();
+            startTimeEl.textContent = formatDate(startTime);
+
+            updateSystemStatus(true);
+            updateStatus('بدأ التحديث التلقائي كل ثانيتين مع 5 زيارات إضافية', 'success');
+
+            // التحديث الأول فورًا
+            performRefreshAndVisits();
+
+            // تحديث كل 2 ثانية
+            refreshInterval = setInterval(() => {
+                performRefreshAndVisits();
+            }, REFRESH_INTERVAL);
+        }
+
+        // إيقاف التحديث
+        function stopRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+                updateSystemStatus(false);
+                updateStatus('تم إيقاف التحديث التلقائي', 'normal');
+            }
+        }
+
+        // معالجة الأحداث عند تحميل الصفحة
+        window.addEventListener('DOMContentLoaded', () => {
+            urlInput.addEventListener('input', showPreview);
+            urlInput.addEventListener('paste', () => setTimeout(showPreview, 100));
+            startBtn.addEventListener('click', startRefresh);
+            stopBtn.addEventListener('click', stopRefresh);
+            updateSystemStatus(false);
+        });
     </script>
 </body>
 </html>
