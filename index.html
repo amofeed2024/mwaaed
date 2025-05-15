@@ -1,321 +1,465 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>علوي أون لاين - مُحدّث الصفحات</title>
-    <style>
-        body {
-            background-color: #e6f3ff;
-            font-family: Arial, sans-serif;
-            direction: rtl;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        .container {
-            max-width: 800px;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #003087;
-            margin-bottom: 20px;
-            font-size: 28px;
-        }
-        .input-group {
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        input[type="text"] {
-            padding: 12px;
-            width: 60%;
-            border: 2px solid #003087;
-            border-radius: 5px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-        input[type="text"]:focus {
-            border-color: #0044cc;
-        }
-        button {
-            padding: 12px 24px;
-            background-color: #003087;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0044cc;
-        }
-        button:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-        }
-        #preview {
-            margin: 20px auto;
-            width: 100%;
-            max-width: 600px;
-            height: 300px;
-            border: 1px solid #003087;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        #previewFrame {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: white;
-        }
-        #statusMessage {
-            color: #003087;
-            font-size: 14px;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        .error { color: #d32f2f !important; }
-        .success { color: #388e3c !important; }
-        .stats {
-            background-color: white;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            border: 2px solid #003087;
-            font-size: 16px;
-        }
-        .stats p { margin: 10px 0; }
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-        .status-active {
-            background-color: #4CAF50;
-            animation: blink 1s infinite;
-        }
-        .status-inactive { background-color: #F44336; }
-        @keyframes blink {
-            50% { opacity: 0.5; }
-        }
-        .footer {
-            margin-top: 20px;
-            color: #003087;
-            font-size: 14px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة مشاهدات المواقع</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Cairo', sans-serif;
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    body {
+      background: linear-gradient(135deg, #8a2387, #e94057, #f27121);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 20px;
+    }
+    
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #ff9d00;
+      text-shadow: 0 0 10px rgba(255, 157, 0, 0.5);
+    }
+    
+    .input-container {
+      display: flex;
+      margin-bottom: 20px;
+    }
+    
+    input {
+      flex: 1;
+      padding: 15px;
+      border-radius: 10px 0 0 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .btn {
+      padding: 15px 25px;
+      border: none;
+      background: linear-gradient(to right, #ff5e62, #ff9966);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-right: 5px;
+      border-radius: 5px;
+    }
+    
+    .btn:first-of-type {
+      border-radius: 0 10px 10px 0;
+      margin-right: 0;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(255, 94, 98, 0.4);
+    }
+    
+    .web-container {
+      margin-top: 20px;
+      border-radius: 15px;
+      overflow: hidden;
+      position: relative;
+      background-color: #fff;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+      height: 400px;
+    }
+    
+    .web-container iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    
+    .stats-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      padding: 15px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+    }
+    
+    .stat {
+      text-align: center;
+      flex: 1;
+      padding: 10px;
+    }
+    
+    .stat-title {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 5px;
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: bold;
+      color: #ff9d00;
+      text-shadow: 0 0 10px rgba(255, 157, 0, 0.3);
+    }
+    
+    .pulse {
+      animation: pulse 1s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .animate-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    
+    /* توصيفات الرسائل التنبيهية */
+    .alert-message {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      padding: 15px 25px;
+      border-radius: 10px;
+      z-index: 1000;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: slideDown 0.5s forwards, fadeOut 0.5s forwards 2.5s;
+      text-align: center;
+    }
+    
+    .success {
+      border-left: 5px solid #4CAF50;
+    }
+    
+    .warning {
+      border-left: 5px solid #FFC107;
+    }
+    
+    @keyframes slideDown {
+      from {
+        top: -50px;
+        opacity: 0;
+      }
+      to {
+        top: 20px;
+        opacity: 1;
+      }
+    }
+    
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+      }
+      to {
+        opacity: 0;
+        visibility: hidden;
+      }
+    }
+
+    .options-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .speed-container {
+      display: flex;
+      align-items: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .speed-container label {
+      margin-left: 10px;
+      color: #ccc;
+    }
+
+    .speed-container select {
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+      background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    .info-icon {
+      margin-right: 10px;
+      color: #ff9d00;
+      cursor: pointer;
+    }
+
+    .tooltip {
+      position: relative;
+      display: inline-block;
+    }
+
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 200px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      text-align: center;
+      padding: 5px;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -100px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 12px;
+    }
+
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>علوي أون لاين - مُحدّث الصفحات</h1>
-        
-        <div class="input-group">
-            <input type="text" id="urlInput" placeholder="أدخل أو الصق الرابط هنا (مثال: https://www.example.com)" dir="ltr">
-            <button id="startBtn">بدء</button>
-            <button id="stopBtn" disabled>إيقاف</button>
-        </div>
-
-        <div id="statusMessage"></div>
-
-        <div class="stats">
-            <p><span class="status-indicator" id="statusIndicator"></span>الحالة: <span id="statusText">غير نشط</span></p>
-            <p>تاريخ اليوم: <span id="currentDate"></span></p>
-            <p>وقت بدء التشغيل: <span id="startTime">-</span></p>
-            <p>عدد الزيارات: <span id="visitCount">0</span></p>
-            <p>آخر تحديث: <span id="lastUpdate">-</span></p>
-        </div>
-
-        <div id="preview">
-            <iframe id="previewFrame" sandbox="allow-same-origin allow-scripts" title="معاينة الموقع"></iframe>
-        </div>
-
-        <div class="footer">تطوير وتشغيل ليوميديا © 2025</div>
+  <div class="container animate-in">
+    <h1>منصة مشاهدات المواقع</h1>
+    
+    <div class="options-container">
+      <div class="speed-container">
+        <label for="refresh-speed">سرعة التحديث:</label>
+        <select id="refresh-speed">
+          <option value="1000">سريع جداً (1 ثانية)</option>
+          <option value="2000" selected>سريع (2 ثانية)</option>
+          <option value="5000">متوسط (5 ثواني)</option>
+          <option value="10000">بطيء (10 ثواني)</option>
+        </select>
+      </div>
+      <div class="tooltip">
+        <i class="fas fa-info-circle info-icon"></i>
+        <span class="tooltiptext">هذه المنصة تقوم بمحاكاة زيارات للموقع المحدد بشكل تلقائي وعد المشاهدات. يمكنك ضبط سرعة التحديث حسب الحاجة.</span>
+      </div>
     </div>
+    
+    <div class="input-container">
+      <input type="text" id="website-url" placeholder="ضع رابط الموقع هنا... (مثال: https://www.example.com)" dir="ltr">
+      <button id="start-btn" class="btn">بدء</button>
+      <button id="stop-btn" class="btn" disabled>إيقاف</button>
+    </div>
+    
+    <div id="web-container" class="web-container hidden">
+      <iframe id="website-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+    </div>
+    
+    <div id="stats-container" class="stats-container hidden">
+      <div class="stat">
+        <div class="stat-title">المشاهدات</div>
+        <div id="view-count" class="stat-value pulse">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">وقت البدء</div>
+        <div id="start-time" class="stat-value">--:--:--</div>
+      </div>
+      <div class="stat">
+        <div class="stat-title">تاريخ البدء</div>
+        <div id="start-date" class="stat-value">--/--/----</div>
+      </div>
+    </div>
+    
+    <div id="developer-credits" class="hidden" style="margin-top: 20px; text-align: center;">
+      <hr style="border: 0; height: 1px; background-color: #fff; margin-bottom: 10px;">
+      <div style="color: #ff9d00; font-weight: bold; font-size: 16px;">تطوير فريق بوابة مصر الآن</div>
+    </div>
+  </div>
+  
 
-    <script>
-        // عناصر DOM
-        const urlInput = document.getElementById('urlInput');
-        const previewFrame = document.getElementById('previewFrame');
-        const statusMessage = document.getElementById('statusMessage');
-        const startBtn = document.getElementById('startBtn');
-        const stopBtn = document.getElementById('stopBtn');
-        const currentDateEl = document.getElementById('currentDate');
-        const startTimeEl = document.getElementById('startTime');
-        const visitCountEl = document.getElementById('visitCount');
-        const lastUpdateEl = document.getElementById('lastUpdate');
-        const statusIndicator = document.getElementById('statusIndicator');
-        const statusText = document.getElementById('statusText');
 
-        // متغيرات عامة
-        let refreshInterval;
-        let visitCount = 0;
-        let startTime;
-        let isActive = false;
-        const REFRESH_INTERVAL = 2000; // 2 ثانية بين كل تحديث
-        const VISITS_PER_REFRESH = 5; // 5 زيارات لكل تحديث
-        const VISIT_DELAY = 300; // 300 مللي ثانية بين كل زيارة (5 × 300 = 1500 مللي ثانية < 2 ثانية)
-
-        // تحديث تاريخ اليوم
-        const today = new Date();
-        currentDateEl.textContent = today.toLocaleDateString('ar', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        });
-
-        // تنسيق التاريخ والوقت
-        function formatDate(date) {
-            if (!date) return '-';
-            return date.toLocaleString('ar', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
+  <script>
+    // العناصر الرئيسية
+    const urlInput = document.getElementById('website-url');
+    const startBtn = document.getElementById('start-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const webContainer = document.getElementById('web-container');
+    const websiteIframe = document.getElementById('website-iframe');
+    const statsContainer = document.getElementById('stats-container');
+    const viewCount = document.getElementById('view-count');
+    const startTime = document.getElementById('start-time');
+    const startDate = document.getElementById('start-date');
+    const refreshSpeed = document.getElementById('refresh-speed');
+    
+    // متغيرات للتتبع
+    let viewsCounter = 0;
+    let viewingInterval;
+    let isRunning = false;
+    
+    // التحقق من صحة الرابط
+    function isValidURL(url) {
+      try {
+        new URL(url);
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+    
+    // تصحيح الرابط إذا لم يحتوي على بروتوكول
+    function fixURL(url) {
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        return 'https://' + url;
+      }
+      return url;
+    }
+    
+    // إظهار رسالة تنبيهية
+    function showAlert(message, type) {
+      // إزالة أي رسائل سابقة
+      const existingAlerts = document.querySelectorAll('.alert-message');
+      existingAlerts.forEach(alert => alert.remove());
+      
+      // إنشاء عنصر الرسالة
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `alert-message ${type}`;
+      alertDiv.innerText = message;
+      
+      // إضافة الرسالة إلى الصفحة
+      document.body.appendChild(alertDiv);
+      
+      // إزالة الرسالة بعد مرور الوقت
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 3000);
+    }
+    
+    // تشغيل العداد
+    function startCounter() {
+      let url = urlInput.value.trim();
+      
+      if (!url) {
+        alert('الرجاء إدخال رابط موقع صحيح');
+        return;
+      }
+      
+      // إضافة بروتوكول إذا لم يكن موجوداً
+      url = fixURL(url);
+      
+      if (!isValidURL(url)) {
+        alert('الرابط غير صحيح، الرجاء إدخال رابط موقع صحيح');
+        return;
+      }
+      
+      // عرض الرابط المصحح في حقل الإدخال
+      urlInput.value = url;
+      
+      // إعداد الموقع
+      websiteIframe.src = url;
+      webContainer.classList.remove('hidden');
+      statsContainer.classList.remove('hidden');
+      document.getElementById('developer-credits').classList.remove('hidden');
+      
+      // إعداد الإحصائيات
+      viewsCounter = 0;
+      viewCount.textContent = viewsCounter;
+      
+      // تعيين وقت وتاريخ البدء
+      const now = new Date();
+      startTime.textContent = now.toLocaleTimeString();
+      startDate.textContent = now.toLocaleDateString();
+      
+      // بدء العد
+      isRunning = true;
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      
+      // إظهار رسالة بدء العداد
+      showAlert("تم بدء العداد بنجاح!", "success");
+      
+      // الحصول على سرعة التحديث المحددة
+      const refreshInterval = parseInt(refreshSpeed.value);
+      
+      // إضافة مشاهدة وتحديث الموقع بناءً على السرعة المحددة
+      viewingInterval = setInterval(() => {
+        if (isRunning) {
+          viewsCounter++;
+          viewCount.textContent = viewsCounter;
+          
+          // إعادة تحميل الموقع لإضافة مشاهدة جديدة
+          websiteIframe.src = url + '?refresh=' + new Date().getTime();
         }
-
-        // التحقق من صحة الرابط
-        function isValidUrl(url) {
-            try {
-                new URL(url);
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-
-        // عرض المعاينة بناءً على الرابط المدخل
-        function showPreview() {
-            const url = urlInput.value.trim();
-            if (isValidUrl(url)) {
-                previewFrame.src = url;
-                previewFrame.onload = () => {
-                    updateStatus('تم تحميل المعاينة بنجاح', 'success');
-                };
-                previewFrame.onerror = () => {
-                    updateStatus('فشل تحميل المعاينة، تحقق من الرابط أو الاتصال', 'error');
-                };
-            } else {
-                previewFrame.src = 'about:blank';
-                updateStatus('يرجى إدخال رابط صالح (مثال: https://www.example.com)', 'error');
-            }
-        }
-
-        // تحديث رسالة الحالة
-        function updateStatus(message, type = 'normal') {
-            statusMessage.textContent = message;
-            statusMessage.className = '';
-            if (type === 'error') statusMessage.classList.add('error');
-            else if (type === 'success') statusMessage.classList.add('success');
-        }
-
-        // تحديث حالة النظام
-        function updateSystemStatus(active) {
-            isActive = active;
-            if (active) {
-                statusIndicator.className = 'status-indicator status-active';
-                statusText.textContent = 'نشط - جارِ التحديث';
-                startBtn.disabled = true;
-                stopBtn.disabled = false;
-            } else {
-                statusIndicator.className = 'status-indicator status-inactive';
-                statusText.textContent = 'غير نشط';
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-            }
-        }
-
-        // زيارة الرابط
-        function visitUrl(url) {
-            const visitImage = new Image();
-            visitImage.src = url + '?_t=' + Date.now();
-            visitImage.onload = () => {
-                visitCount++;
-                visitCountEl.textContent = visitCount;
-            };
-            visitImage.onerror = () => {
-                console.log('فشل زيارة الرابط');
-            };
-        }
-
-        // تنفيذ التحديث و5 زيارات إضافية
-        function performRefreshAndVisits() {
-            const url = urlInput.value.trim();
-            if (!isValidUrl(url)) {
-                updateStatus('يرجى إدخال رابط صالح قبل البدء', 'error');
-                stopRefresh();
-                return;
-            }
-
-            const timestamp = new Date();
-            lastUpdateEl.textContent = formatDate(timestamp);
-
-            // تحديث الإطار (refresh)
-            previewFrame.src = url + '?_refresh=' + Date.now();
-            visitCount++; // زيادة العداد للتحديث الأساسي
-            visitCountEl.textContent = visitCount;
-
-            // تنفيذ 5 زيارات إضافية
-            for (let i = 0; i < VISITS_PER_REFRESH; i++) {
-                setTimeout(() => {
-                    visitUrl(url);
-                }, i * VISIT_DELAY); // تأخير 300 مللي ثانية بين كل زيارة
-            }
-        }
-
-        // بدء التحديث التلقائي
-        function startRefresh() {
-            if (isActive) return;
-
-            const url = urlInput.value.trim();
-            if (!isValidUrl(url)) {
-                updateStatus('يرجى إدخال رابط صالح قبل البدء', 'error');
-                return;
-            }
-
-            startTime = new Date();
-            startTimeEl.textContent = formatDate(startTime);
-
-            updateSystemStatus(true);
-            updateStatus('بدأ التحديث التلقائي كل ثانيتين مع 5 زيارات إضافية', 'success');
-
-            // التحديث الأول فورًا
-            performRefreshAndVisits();
-
-            // تحديث كل 2 ثانية
-            refreshInterval = setInterval(() => {
-                performRefreshAndVisits();
-            }, REFRESH_INTERVAL);
-        }
-
-        // إيقاف التحديث
-        function stopRefresh() {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-                refreshInterval = null;
-                updateSystemStatus(false);
-                updateStatus('تم إيقاف التحديث التلقائي', 'normal');
-            }
-        }
-
-        // معالجة الأحداث عند تحميل الصفحة
-        window.addEventListener('DOMContentLoaded', () => {
-            urlInput.addEventListener('input', showPreview);
-            urlInput.addEventListener('paste', () => setTimeout(showPreview, 100));
-            startBtn.addEventListener('click', startRefresh);
-            stopBtn.addEventListener('click', stopRefresh);
-            updateSystemStatus(false);
-        });
-    </script>
+      }, refreshInterval);
+    }
+    
+    // إيقاف العداد
+    function stopCounter() {
+      isRunning = false;
+      clearInterval(viewingInterval);
+      startBtn.disabled = false;
+      stopBtn.disabled = true;
+      
+      // إظهار رسالة إيقاف العداد
+      showAlert("تم توقف العداد الآن!", "warning");
+    }
+    
+    // إضافة المستمعين للأحداث
+    startBtn.addEventListener('click', startCounter);
+    stopBtn.addEventListener('click', stopCounter);
+    
+    // تفعيل زر البدء عند الضغط على Enter
+    urlInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        startCounter();
+      }
+    });
+    
+    // التحقق من حالة تحميل الإطار
+    websiteIframe.addEventListener('load', () => {
+      // يمكن إضافة منطق إضافي هنا للتأكد من تحميل الموقع بنجاح
+      console.log('تم تحميل الموقع بنجاح');
+    });
+    
+    websiteIframe.addEventListener('error', () => {
+      console.error('حدث خطأ أثناء تحميل الموقع');
+    });
+  </script>
 </body>
 </html>
